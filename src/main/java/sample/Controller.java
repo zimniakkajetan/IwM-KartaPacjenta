@@ -68,10 +68,8 @@ public class Controller {
                     @Override
                     protected void updateItem(Patient item, boolean empty) {
                         super.updateItem(item, empty);
-                        if (empty || item == null) {
-                            setText(null);
-                        } else {
-                            setText(item.getName().get(0).getGiven() + " " + item.getName().get(0).getFamily() + "id: " +item.getId().getIdPart());
+                        if (!empty && item != null) {
+                            setText(item.getName().get(0).getGiven() + " " + item.getName().get(0).getFamily() + "id: " + item.getId().getIdPart());
                         }
                     }
                 };
@@ -85,8 +83,8 @@ public class Controller {
             @Override
             public void handle(MouseEvent event) {
                 Patient clickedPatient = (Patient) name_listview.getSelectionModel().getSelectedItem();
-                System.out.println("clicked on " + clickedPatient);
-                Main.changeView("patient",clickedPatient);
+                if (clickedPatient != null)
+                    Main.changeView("patient", clickedPatient);
             }
         });
     }
