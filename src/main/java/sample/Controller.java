@@ -79,31 +79,16 @@ public class Controller {
         });
 
         name_listview.setItems(observableList);
-        Main.changeView(2);
+
         name_listview.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
             @Override
             public void handle(MouseEvent event) {
                 Patient clickedPatient = (Patient) name_listview.getSelectionModel().getSelectedItem();
                 System.out.println("clicked on " + clickedPatient);
-                Main.changeView(1);
-                getPatientFullInfo(clickedPatient);
+                Main.changeView("patient",clickedPatient);
             }
         });
     }
 
-    private void getPatientFullInfo(Patient patient) {
-        String id = patient.getId().getIdPart();
-        Bundle results = client
-                .search()
-                .forResource(Patient.class)
-                .where(new StringClientParam("_id").matchesExactly().value(id))
-                .revInclude(new Include("*"))
-                .returnBundle(ca.uhn.fhir.model.dstu2.resource.Bundle.class)
-                .execute();
-        for (Bundle.Entry element : results.getEntry()) {
-            System.out.println(element.getResource().getResourceName());
-        }
-
-    }
 }

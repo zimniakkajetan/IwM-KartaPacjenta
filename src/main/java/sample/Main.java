@@ -1,38 +1,33 @@
 package sample;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.dstu2.composite.QuantityDt;
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Observation;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
-import ca.uhn.fhir.model.dstu2.valueset.BundleTypeEnum;
-import ca.uhn.fhir.model.dstu2.valueset.HTTPVerbEnum;
-import ca.uhn.fhir.model.dstu2.valueset.ObservationStatusEnum;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Control;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Main extends Application {
     static List<SplitPane> splitpane = new ArrayList<SplitPane>();
     static AnchorPane root;
-    static int curentView = 0;
+    private static String currentView;
+    private static HashMap<String, Control> screenMap = new HashMap<String,Control>();
+    private static PatientController patientController;
+    private static Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        this.primaryStage=primaryStage;
         //Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("main.fxml"));
         //Connecting to server
         FhirContext ctx = FhirContext.forDstu2();
@@ -45,21 +40,17 @@ public class Main extends Application {
         Parent root = loader.load();*/
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("main.fxml"));
-        FXMLLoader loader2 = new FXMLLoader(getClass().getClassLoader().getResource("view2.fxml"));
+        FXMLLoader loader2 = new FXMLLoader(getClass().getClassLoader().getResource("patient.fxml"));
 
-        Controller controller = new Controller(client);
+        loader.setController(new Controller(client));
+        loader2.setController(patientController=new PatientController(client));
 
-        loader.setController(controller);
-        loader2.setController(controller);
+        screenMap.put("main", (SplitPane)loader.load());
+        screenMap.put("patient", (SplitPane)loader2.load());
 
-        splitpane.add((SplitPane)loader.load());
-        splitpane.add((SplitPane)loader2.load());
-
-        root = (AnchorPane)FXMLLoader.load(getClass().getClassLoader().getResource("basic_annchor.fxml"));
-        root.getChildren().add(splitpane.get(0));
 
         primaryStage.setTitle("Karta Pacjenta");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.setScene(new Scene(screenMap.get("main")));
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         primaryStage.setX(primaryScreenBounds.getMinX());
         primaryStage.setY(primaryScreenBounds.getMinY());
@@ -69,20 +60,14 @@ public class Main extends Application {
         primaryStage.show();
 
     }
-    public static void changeView (int i){
-
-        if(i == 0){
-            root.getChildren().remove(splitpane.get(curentView));
-            root.getChildren().add(splitpane.get(0));
-            curentView = 0;
+    public static void changeView (String name, Object... params){
+        Control pane = screenMap.get(name);
+        if(pane!=null) {
+            primaryStage.setScene(new Scene(pane));
+            currentView = name;
         }
-        if(i == 1){
-            root.getChildren().remove(splitpane.get(curentView));
-            root.getChildren().add(splitpane.get(1));
-
-            curentView = 1;
-            //Bedzie trzeba dodac przekazywanie parametrow,
-            //np id wybranej osoby
+        if(name=="patient"){
+            patientController.initData(params);
         }
     }
 
