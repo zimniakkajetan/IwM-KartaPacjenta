@@ -30,10 +30,10 @@ public class Main extends Application {
     static List<SplitPane> splitpane = new ArrayList<SplitPane>();
     static AnchorPane root;
     static int curentView = 0;
+
     @Override
     public void start(Stage primaryStage) throws Exception{
         //Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("main.fxml"));
-
         //Connecting to server
         FhirContext ctx = FhirContext.forDstu2();
         String serverBase = "http://fhirtest.uhn.ca/baseDstu2";
@@ -79,6 +79,7 @@ public class Main extends Application {
         if(i == 1){
             root.getChildren().remove(splitpane.get(curentView));
             root.getChildren().add(splitpane.get(1));
+
             curentView = 1;
             //Bedzie trzeba dodac przekazywanie parametrow,
             //np id wybranej osoby
