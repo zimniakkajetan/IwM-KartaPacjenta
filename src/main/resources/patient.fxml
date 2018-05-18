@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<SplitPane layoutX="-9.0" orientation="VERTICAL" prefHeight="661.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+         <items>
+            <AnchorPane minHeight="-Infinity" prefHeight="192.0" prefWidth="1000.0" SplitPane.resizableWithParent="true">
+         <children>
+            <TextArea fx:id="textAreaPatientInfo" layoutX="54.0" layoutY="72.0" prefHeight="487.0" prefWidth="553.0" />
+            <Text layoutX="54.0" layoutY="68.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Elements associated with this patient:" />
+         </children></AnchorPane>
+
+         </items>
+      </SplitPane>
