@@ -1,17 +1,22 @@
 package sample;
 
+import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.api.Include;
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
+import ca.uhn.fhir.model.dstu2.resource.*;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 
+import java.util.ArrayList;
+
 public class PatientController {
     IGenericClient client;
     private Patient patient;
+    private ArrayList<Observation> observations=new ArrayList<Observation>();
+    private ArrayList<Medication> medications = new ArrayList<Medication>();
+    private ArrayList<MedicationStatement> medicationStatements = new ArrayList<MedicationStatement>();
 
     @FXML
     TextArea textAreaPatientInfo;
@@ -38,13 +43,24 @@ public class PatientController {
                         .returnBundle(ca.uhn.fhir.model.dstu2.resource.Bundle.class)
                         .execute();
                 for (final Bundle.Entry element : results.getEntry()) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            textAreaPatientInfo.appendText(element.getResource().getResourceName()+"\n\r");
-                        }
-                    });
+                    IResource resource = element.getResource();
+                    if( resource instanceof Observation){
+                        observations.add((Observation)resource);
+                    }else if(resource instanceof Medication){
+                        medications.add((Medication)resource);
+                    }else if(resource instanceof MedicationStatement){
+                        medicationStatements.add((MedicationStatement)resource);
+                    }
                 }
+
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        textAreaPatientInfo.appendText("Observations: " + observations.size()+"\n");
+                        textAreaPatientInfo.appendText("Medications: " + medications.size()+"\n");
+                        textAreaPatientInfo.appendText("MedicationStatements: " + medicationStatements.size()+"\n");
+                    }
+                });
             }
         }).start();
     }
