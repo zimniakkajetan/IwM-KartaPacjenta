@@ -34,8 +34,6 @@ public class Controller {
     TextField searchfield;
     @FXML
     ListView name_listview;
-    @FXML
-    TextArea textAreaPatientInfo;
 
     @FXML
     protected void search() {
@@ -105,7 +103,6 @@ public class Controller {
                 .execute();
         for (Bundle.Entry element : results.getEntry()) {
             System.out.println(element.getResource().getResourceName());
-            //textAreaPatientInfo.append(element.getResource() + "\n");
         }
 
     }
