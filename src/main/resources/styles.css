@@ -1,0 +1,6 @@
+.jfx-button {
+    -fx-text-fill: blue;
+}
+.tree-table-view .tree-table-cell{
+    -fx-padding: 0 0 0 16;
+}
