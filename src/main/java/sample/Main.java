@@ -46,13 +46,10 @@ public class Main extends Application {
 
         primaryStage.setTitle("Karta Pacjenta");
         Scene scene =new Scene(screenMap.get("main"));
+        scene.getStylesheets().add("styles.css");
         controller.init();
         primaryStage.setScene(scene);
-        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        primaryStage.setX(primaryScreenBounds.getMinX());
-        primaryStage.setY(primaryScreenBounds.getMinY());
-        primaryStage.setWidth(primaryScreenBounds.getWidth());
-        primaryStage.setHeight(primaryScreenBounds.getHeight());
+
 
         primaryStage.show();
 
