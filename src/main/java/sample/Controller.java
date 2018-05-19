@@ -9,6 +9,7 @@ import com.jfoenix.controls.*;
 import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
 import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -86,15 +87,20 @@ public class Controller {
     protected void search() {
         if (!searchfield.getText().isEmpty()) {
             // Perform a search
-            Bundle results = client
-                    .search()
-                    .forResource(Patient.class)
-                    .where(Patient.FAMILY.matches().value(searchfield.getText().toString()))
-                    .returnBundle(ca.uhn.fhir.model.dstu2.resource.Bundle.class)
-                    .execute();
+            new Thread(() -> {
+                Bundle results = client
+                        .search()
+                        .forResource(Patient.class)
+                        .where(Patient.FAMILY.matches().value(searchfield.getText().toString()))
+                        .returnBundle(ca.uhn.fhir.model.dstu2.resource.Bundle.class)
+                        .execute();
 
-            System.out.println("Found " + results.getEntry().size() + " patients named " + searchfield.getText().toString());
-            fillNameListView(results, searchfield.getText().toString());
+                System.out.println("Found " + results.getEntry().size() + " patients named " + searchfield.getText().toString());
+                Platform.runLater(() -> {
+                    fillNameListView(results, searchfield.getText().toString());
+                });
+            }).start();
+
         }
     }
 
@@ -109,8 +115,8 @@ public class Controller {
         }
 
         treeView.setOnMouseClicked(event -> {
-            if(treeView.getSelectionModel().getSelectedItem()==null)return;
-            Patient clickedPatient =  treeView.getSelectionModel().getSelectedItem().getValue().patient;
+            if (treeView.getSelectionModel().getSelectedItem() == null) return;
+            Patient clickedPatient = treeView.getSelectionModel().getSelectedItem().getValue().patient;
             if (clickedPatient != null)
                 Main.changeView("patient", clickedPatient);
         });
