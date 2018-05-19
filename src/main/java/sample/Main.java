@@ -21,36 +21,33 @@ public class Main extends Application {
     static List<SplitPane> splitpane = new ArrayList<SplitPane>();
     static AnchorPane root;
     private static String currentView;
-    private static HashMap<String, Control> screenMap = new HashMap<String,Control>();
+    private static HashMap<String, Pane> screenMap = new HashMap<>();
     private static PatientController patientController;
+    private static Controller controller;
     private static Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         this.primaryStage=primaryStage;
-        //Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("main.fxml"));
-        //Connecting to server
         FhirContext ctx = FhirContext.forDstu2();
         String serverBase = "http://fhirtest.uhn.ca/baseDstu2";
         IGenericClient client = ctx.newRestfulGenericClient(serverBase);
 
-        /*Controller controller = new Controller(client);
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("basic_annchor.fxml"));
-        loader.setController(controller);
-        Parent root = loader.load();*/
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("main.fxml"));
         FXMLLoader loader2 = new FXMLLoader(getClass().getClassLoader().getResource("patient.fxml"));
 
-        loader.setController(new Controller(client));
+        loader.setController(controller=new Controller(client));
         loader2.setController(patientController=new PatientController(client));
 
-        screenMap.put("main", (SplitPane)loader.load());
-        screenMap.put("patient", (SplitPane)loader2.load());
+        screenMap.put("main", loader.load());
+        screenMap.put("patient", loader2.load());
 
 
         primaryStage.setTitle("Karta Pacjenta");
-        primaryStage.setScene(new Scene(screenMap.get("main")));
+        Scene scene =new Scene(screenMap.get("main"));
+        controller.init();
+        primaryStage.setScene(scene);
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         primaryStage.setX(primaryScreenBounds.getMinX());
         primaryStage.setY(primaryScreenBounds.getMinY());
@@ -61,7 +58,7 @@ public class Main extends Application {
 
     }
     public static void changeView (String name, Object... params){
-        Control pane = screenMap.get(name);
+        Pane pane = screenMap.get(name);
         if(pane!=null) {
             primaryStage.setScene(new Scene(pane));
             currentView = name;

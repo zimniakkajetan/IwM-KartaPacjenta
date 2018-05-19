@@ -5,23 +5,29 @@ import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
+import com.jfoenix.controls.*;
+import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
+import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
+import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
 import java.awt.*;
-import java.util.Collection;
-import java.util.Iterator;
+import java.time.Period;
+import java.time.ZoneId;
+import java.util.*;
 import java.util.List;
-import java.util.ListIterator;
 
 public class Controller {
     IGenericClient client;
@@ -30,15 +36,55 @@ public class Controller {
         this.client = client;
     }
 
+    public void init() {
+        comboBox.getItems().add(new Label("All"));
+        comboBox.getItems().add(new Label("First Name"));
+        comboBox.getItems().add(new Label("Last Name"));
+        comboBox.getSelectionModel().select(0);
+
+        JFXTreeTableColumn<TablePatient, String> nameColumn = new JFXTreeTableColumn<>("First Name");
+        nameColumn.setPrefWidth(150);
+        nameColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<TablePatient, String> param) -> {
+            if (nameColumn.validateValue(param)) return param.getValue().getValue().name;
+            else return nameColumn.getComputedValue(param);
+        });
+
+        JFXTreeTableColumn<TablePatient, String> lastNameColumn = new JFXTreeTableColumn<>("Last Name");
+        lastNameColumn.setPrefWidth(150);
+        lastNameColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<TablePatient, String> param) -> {
+            if (lastNameColumn.validateValue(param)) return param.getValue().getValue().lastName;
+            else return lastNameColumn.getComputedValue(param);
+        });
+
+        JFXTreeTableColumn<TablePatient, String> ageColumn = new JFXTreeTableColumn<>("Age");
+        ageColumn.setPrefWidth(150);
+        ageColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<TablePatient, String> param) -> {
+            if (ageColumn.validateValue(param)) return param.getValue().getValue().age;
+            else return ageColumn.getComputedValue(param);
+        });
+
+        patients = FXCollections.observableArrayList();
+// build tree
+        final TreeItem<TablePatient> root = new RecursiveTreeItem<TablePatient>(patients, RecursiveTreeObject::getChildren);
+        treeView.setRoot(root);
+        treeView.setShowRoot(false);
+        treeView.setEditable(true);
+        treeView.getColumns().setAll(nameColumn, lastNameColumn, ageColumn);
+
+    }
+
     @FXML
-    TextField searchfield;
+    JFXTextField searchfield;
     @FXML
-    ListView name_listview;
+    JFXComboBox comboBox;
+    @FXML
+    JFXTreeTableView<TablePatient> treeView;
+
+    ObservableList<TablePatient> patients;
 
     @FXML
     protected void search() {
         if (!searchfield.getText().isEmpty()) {
-            //System.out.println(searchfield.getText());
             // Perform a search
             Bundle results = client
                     .search()
@@ -53,40 +99,38 @@ public class Controller {
     }
 
     public void fillNameListView(final Bundle results, String name) {
-        ObservableList<Patient> observableList = FXCollections.observableArrayList();
+        patients.clear();
         for (Bundle.Entry element : results.getEntry()) {
             Patient patient = (Patient) element.getResource();
             if (!patient.getName().get(0).getGiven().isEmpty()) {
-                observableList.add(patient);
+                patients.add(new TablePatient(patient));
             }
             System.out.println(patient.getName().get(0).getGiven());
         }
-        name_listview.setCellFactory(new Callback<ListView, ListCell>() {
-            @Override
-            public ListCell call(ListView param) {
-                return new ListCell<Patient>() {
-                    @Override
-                    protected void updateItem(Patient item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (!empty && item != null) {
-                            setText(item.getName().get(0).getGiven() + " " + item.getName().get(0).getFamily() + "id: " + item.getId().getIdPart());
-                        }
-                    }
-                };
-            }
+
+        treeView.setOnMouseClicked(event -> {
+            Patient clickedPatient =  treeView.getSelectionModel().getSelectedItem().getValue().patient;
+            if (clickedPatient != null)
+                Main.changeView("patient", clickedPatient);
         });
+    }
 
-        name_listview.setItems(observableList);
+    class TablePatient extends RecursiveTreeObject<TablePatient> {
+        StringProperty name;
+        StringProperty lastName;
+        StringProperty age;
+        Patient patient;
 
-        name_listview.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-            @Override
-            public void handle(MouseEvent event) {
-                Patient clickedPatient = (Patient) name_listview.getSelectionModel().getSelectedItem();
-                if (clickedPatient != null)
-                    Main.changeView("patient", clickedPatient);
+        public TablePatient(Patient patient) {
+            this.patient = patient;
+            name = new SimpleStringProperty(patient.getName().get(0).getGivenAsSingleString());
+            lastName = new SimpleStringProperty(patient.getName().get(0).getFamilyAsSingleString());
+            String ageString = "Unknown";
+            if (patient.getBirthDate() != null) {
+                ageString = String.valueOf(Period.between(patient.getBirthDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).getYears());
             }
-        });
+            age = new SimpleStringProperty(ageString);
+        }
     }
 
 }
