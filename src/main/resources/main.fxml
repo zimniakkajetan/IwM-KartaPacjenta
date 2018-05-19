@@ -19,5 +19,14 @@
                   <JFXButton fx:id="searchbtn"  mnemonicParsing="false" onAction="#search" text="SEARCH" />
         </children>
     </HBox>
-    <JFXTreeTableView fx:id="treeView"  GridPane.rowIndex="1"  GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"/>
+    <JFXTreeTableView fx:id="treeView"  GridPane.rowIndex="1"  GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+        <placeholder>
+            <Label text=""/>
+        </placeholder>
+    </JFXTreeTableView>
+    <VBox GridPane.rowIndex="1" alignment="CENTER">
+        <HBox alignment="CENTER">
+            <JFXSpinner fx:id="spinner"  radius="20" visible="false"/>
+        </HBox>
+    </VBox>
 </GridPane>

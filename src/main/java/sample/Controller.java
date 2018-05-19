@@ -80,6 +80,8 @@ public class Controller {
     JFXComboBox comboBox;
     @FXML
     JFXTreeTableView<TablePatient> treeView;
+    @FXML
+    JFXSpinner spinner;
 
     ObservableList<TablePatient> patients;
 
@@ -87,6 +89,11 @@ public class Controller {
     protected void search() {
         if (!searchfield.getText().isEmpty()) {
             // Perform a search
+            patients.clear();
+            spinner.setVisible(true);
+            Platform.runLater(() -> {
+                treeView.setPlaceholder(new Label(""));
+            });
             new Thread(() -> {
                 Bundle results = client
                         .search()
@@ -94,9 +101,12 @@ public class Controller {
                         .where(Patient.FAMILY.matches().value(searchfield.getText().toString()))
                         .returnBundle(ca.uhn.fhir.model.dstu2.resource.Bundle.class)
                         .execute();
-
+                spinner.setVisible(false);
                 System.out.println("Found " + results.getEntry().size() + " patients named " + searchfield.getText().toString());
                 Platform.runLater(() -> {
+                    if (results.getEntry().size() == 0) {
+                        treeView.setPlaceholder(new Label("No results found"));
+                    }
                     fillNameListView(results, searchfield.getText().toString());
                 });
             }).start();
