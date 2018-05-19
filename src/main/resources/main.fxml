@@ -24,7 +24,7 @@
             <Label text=""/>
         </placeholder>
     </JFXTreeTableView>
-    <VBox GridPane.rowIndex="1" alignment="CENTER">
+    <VBox GridPane.rowIndex="1" alignment="CENTER" mouseTransparent="true">
         <HBox alignment="CENTER">
             <JFXSpinner fx:id="spinner"  radius="20" visible="false"/>
         </HBox>

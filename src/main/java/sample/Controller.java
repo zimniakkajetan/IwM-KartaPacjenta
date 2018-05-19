@@ -4,6 +4,7 @@ import ca.uhn.fhir.model.api.Include;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.rest.client.IGenericClient;
+import ca.uhn.fhir.rest.gclient.ICriterion;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
 import com.jfoenix.controls.*;
 import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
@@ -39,8 +40,8 @@ public class Controller {
 
     public void init() {
         comboBox.getItems().add(new Label("All"));
-        comboBox.getItems().add(new Label("First Name"));
         comboBox.getItems().add(new Label("Last Name"));
+        comboBox.getItems().add(new Label("First Name"));
         comboBox.getSelectionModel().select(0);
 
         JFXTreeTableColumn<TablePatient, String> nameColumn = new JFXTreeTableColumn<>("First Name");
@@ -95,10 +96,18 @@ public class Controller {
                 treeView.setPlaceholder(new Label(""));
             });
             new Thread(() -> {
+                String query = searchfield.getText().toString();
+                ICriterion criterion = new StringClientParam("name").matches().value(query);
+                if(comboBox.getSelectionModel().getSelectedIndex()==1){
+                    criterion = Patient.FAMILY.matches().value(query);
+                }else if(comboBox.getSelectionModel().getSelectedIndex()==2){
+                    criterion = Patient.GIVEN.matches().value(query);
+                }
+
                 Bundle results = client
                         .search()
                         .forResource(Patient.class)
-                        .where(Patient.FAMILY.matches().value(searchfield.getText().toString()))
+                        .where(criterion)
                         .returnBundle(ca.uhn.fhir.model.dstu2.resource.Bundle.class)
                         .execute();
                 spinner.setVisible(false);
