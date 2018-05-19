@@ -1,11 +1,14 @@
 package sample;
 
+import ca.uhn.fhir.model.api.IDatatype;
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.api.Include;
 import ca.uhn.fhir.model.base.resource.ResourceMetadataMap;
+import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.resource.*;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
+import com.sun.org.apache.bcel.internal.classfile.Code;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
@@ -14,6 +17,7 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class PatientController {
     IGenericClient client;
@@ -24,6 +28,12 @@ public class PatientController {
 
     @FXML
     TextArea textAreaPatientInfo;
+    @FXML
+    TextArea textAreaPatientObservations;
+    @FXML
+    TextArea textAreaPatientMedicationStatements;
+    @FXML
+    TextArea textAreaPatientMedications;
 
     @FXML
     Text textPatientName;
@@ -38,7 +48,8 @@ public class PatientController {
             @Override
             public void run() {
                 textPatientName.setText(patient.getName().get(0).getGivenAsSingleString() + " " + patient.getName().get(0).getFamilyAsSingleString());
-            }});
+            }
+        });
         getPatientData();
     }
 
@@ -65,16 +76,9 @@ public class PatientController {
                     }
                 }
 
+                sortArrays();
+                displayData();
 
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        textAreaPatientInfo.appendText("Observations: " + observations.size() + "\n");
-                        textAreaPatientInfo.appendText("Medications: " + medications.size() + "\n");
-                        textAreaPatientInfo.appendText("MedicationStatements: " + medicationStatements.size() + "\n");
-                        sortArrays();
-                    }
-                });
             }
         }).start();
     }
@@ -86,24 +90,39 @@ public class PatientController {
                 return o1.getMeta().getLastUpdated().compareTo(o2.getMeta().getLastUpdated());
             }
         });
+    }
+
+    private void displayData() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                textAreaPatientInfo.appendText("\n\nSorted observations:\n");
-                for (final Observation observation : observations) {
-                    textAreaPatientInfo.appendText(observation.getMeta().getLastUpdated() + " " + getObservationDescription(observation) + "\n");
+                textAreaPatientInfo.appendText("Observations: " + observations.size() + "\n");
+                textAreaPatientInfo.appendText("Medications: " + medications.size() + "\n");
+                textAreaPatientInfo.appendText("MedicationStatements: " + medicationStatements.size() + "\n");
+                for (Observation observation : observations) {
+                    textAreaPatientObservations.appendText(observation.getMeta().getLastUpdated() + " " + getObservationDescription(observation) + "\n");
                 }
+                for(Medication medication : medications){
+                    textAreaPatientMedications.appendText(medication.getText()+"\n");
+                }
+                for(MedicationStatement mStatement : medicationStatements){
+                    CodeableConceptDt medication =null;
+                    if(mStatement.getMedication() instanceof CodeableConceptDt){
+                        medication= ((CodeableConceptDt)mStatement.getMedication());
+                    }
 
+                    textAreaPatientMedicationStatements.appendText((medication!=null? medication.getText() : "") + " -> " +mStatement.getDosage().get(0).getText()+"\n");
+                }
             }
         });
     }
 
-    private String getObservationDescription(Observation observation){
+    private String getObservationDescription(Observation observation) {
         String description = observation.getText().getDivAsString();
-        if(description!= null && description.contains("'>") && description.contains("</div")){
-            description=description.substring(description.lastIndexOf("'>")+2,description.lastIndexOf("</div"));
+        if (description != null && description.contains("'>") && description.contains("</div")) {
+            description = description.substring(description.lastIndexOf("'>") + 2, description.lastIndexOf("</div"));
         }
-        return description==null? "" : description;
+        return description == null ? "" : description;
     }
 
 }

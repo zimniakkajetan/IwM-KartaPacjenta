@@ -13,13 +13,33 @@
          <items>
             <AnchorPane minHeight="-Infinity" prefHeight="192.0" prefWidth="1000.0" SplitPane.resizableWithParent="true">
          <children>
-            <TextArea fx:id="textAreaPatientInfo" layoutX="54.0" layoutY="72.0" prefHeight="487.0" prefWidth="553.0" />
             <Text layoutX="54.0" layoutY="68.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Elements associated with this patient:" />
             <Text fx:id="textPatientName" layoutX="54.0" layoutY="48.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Firstname Lastname">
                <font>
                   <Font size="25.0" />
                </font>
             </Text>
+            <TabPane layoutX="53.0" layoutY="72.0" prefHeight="487.0" prefWidth="553.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="Info">
+                     <content>
+                        <TextArea fx:id="textAreaPatientInfo" prefHeight="200.0" prefWidth="200.0" />
+                     </content></Tab>
+                <Tab text="Observations">
+                     <content>
+                        <TextArea fx:id="textAreaPatientObservations" prefHeight="487.0" prefWidth="553.0" />
+                     </content>
+                  </Tab>
+                  <Tab text="Medications">
+                     <content>
+                        <TextArea fx:id="textAreaPatientMedications" prefHeight="200.0" prefWidth="200.0" />
+                     </content></Tab>
+                  <Tab text="Medication Statements">
+                     <content>
+                        <TextArea fx:id="textAreaPatientMedicationStatements" prefHeight="200.0" prefWidth="200.0" />
+                     </content></Tab>
+              </tabs>
+            </TabPane>
          </children></AnchorPane>
 
          </items>
