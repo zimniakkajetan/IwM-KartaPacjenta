@@ -91,12 +91,19 @@ public class PatientController {
             public void run() {
                 textAreaPatientInfo.appendText("\n\nSorted observations:\n");
                 for (final Observation observation : observations) {
-
-                    textAreaPatientInfo.appendText(observation.getMeta().getLastUpdated() + " " + observation.getResourceName() + "\n");
+                    textAreaPatientInfo.appendText(observation.getMeta().getLastUpdated() + " " + getObservationDescription(observation) + "\n");
                 }
 
             }
         });
+    }
+
+    private String getObservationDescription(Observation observation){
+        String description = observation.getText().getDivAsString();
+        if(description!= null && description.contains("'>") && description.contains("</div")){
+            description=description.substring(description.lastIndexOf("'>")+2,description.lastIndexOf("</div"));
+        }
+        return description==null? "" : description;
     }
 
 }
