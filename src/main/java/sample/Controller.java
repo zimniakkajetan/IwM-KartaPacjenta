@@ -38,6 +38,10 @@ public class Controller {
         this.client = client;
     }
 
+    public void clearSelection(){
+        treeView.getSelectionModel().clearSelection();
+    }
+
     public void init() {
         comboBox.getItems().add(new Label("All"));
         comboBox.getItems().add(new Label("Last Name"));

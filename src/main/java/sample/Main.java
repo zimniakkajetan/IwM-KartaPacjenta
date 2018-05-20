@@ -62,6 +62,8 @@ public class Main extends Application {
         }
         if(name=="patient"){
             patientController.initData(params);
+        }else if(name=="main"){
+            controller.clearSelection();
         }
     }
 
