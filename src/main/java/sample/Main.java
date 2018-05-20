@@ -42,13 +42,13 @@ public class Main extends Application {
 
         screenMap.put("main", loader.load());
         screenMap.put("patient", loader2.load());
+        screenMap.get("main").getStylesheets().add("styles.css");
+        screenMap.get("patient").getStylesheets().add("styles.css");
 
 
         primaryStage.setTitle("Karta Pacjenta");
-        Scene scene =new Scene(screenMap.get("main"));
-        scene.getStylesheets().add("styles.css");
         controller.init();
-        primaryStage.setScene(scene);
+        primaryStage.setScene(new Scene(screenMap.get("main")));
 
 
         primaryStage.show();
@@ -57,7 +57,7 @@ public class Main extends Application {
     public static void changeView (String name, Object... params){
         Pane pane = screenMap.get(name);
         if(pane!=null) {
-            primaryStage.setScene(new Scene(pane));
+            primaryStage.getScene().setRoot(pane);
             currentView = name;
         }
         if(name=="patient"){

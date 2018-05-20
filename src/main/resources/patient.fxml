@@ -10,16 +10,23 @@
 <?import javafx.scene.control.Label?>
 
 <?import com.jfoenix.controls.JFXTabPane?>
-<AnchorPane layoutX="-9.0" prefHeight="661.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-            <AnchorPane minHeight="-Infinity" prefHeight="192.0" prefWidth="1000.0" SplitPane.resizableWithParent="true">
-         <children>
-            <Text layoutX="54.0" layoutY="68.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Elements associated with this patient:" />
-            <Text fx:id="textPatientName" layoutX="54.0" layoutY="48.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Firstname Lastname">
+<?import com.jfoenix.controls.JFXButton?>
+<GridPane prefHeight="500" prefWidth="800" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <HBox fx:id="topHBox" GridPane.rowIndex="0" spacing="16">
+        <padding><Insets top="10" right="10"  bottom="10" left="10"/></padding>
+        <children>
+            <VBox alignment="CENTER">
+        <JFXButton fx:id="backButton" onAction="#goBack"></JFXButton>
+            </VBox>
+        <Text   fx:id="textPatientName"  strokeType="OUTSIDE"  text="Firstname Lastname">
                <font>
                   <Font size="25.0" />
                </font>
-            </Text>
-            <JFXTabPane layoutX="53.0" layoutY="72.0" prefHeight="487.0" prefWidth="553.0" tabClosingPolicy="UNAVAILABLE">
+        </Text>
+        </children>
+
+    </HBox>
+            <JFXTabPane GridPane.rowIndex="1"  GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
               <tabs>
                 <Tab text="Info">
                      <content>
@@ -40,5 +47,4 @@
                      </content></Tab>
               </tabs>
             </JFXTabPane>
-         </children></AnchorPane>
-      </AnchorPane>
+</GridPane>

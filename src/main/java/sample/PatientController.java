@@ -8,10 +8,13 @@ import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.resource.*;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
+import com.jfoenix.controls.JFXButton;
 import com.sun.org.apache.bcel.internal.classfile.Code;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
@@ -34,6 +37,11 @@ public class PatientController {
     TextArea textAreaPatientMedicationStatements;
     @FXML
     TextArea textAreaPatientMedications;
+    @FXML
+    HBox topHBox;
+    @FXML
+    JFXButton backButton;
+
 
     @FXML
     Text textPatientName;
@@ -43,6 +51,18 @@ public class PatientController {
     }
 
     public void initData(Object... params) {
+        backButton.setPickOnBounds(true);
+        textAreaPatientInfo.requestFocus();
+        
+        textAreaPatientInfo.clear();
+        textAreaPatientMedications.clear();
+        textAreaPatientObservations.clear();
+        textAreaPatientMedicationStatements.clear();
+
+        Region icon = new Region();
+        icon.getStyleClass().add("icon");
+        backButton.setGraphic(icon);
+
         patient = (Patient) params[0];
         Platform.runLater(new Runnable() {
             @Override
@@ -123,6 +143,11 @@ public class PatientController {
             description = description.substring(description.lastIndexOf("'>") + 2, description.lastIndexOf("</div"));
         }
         return description == null ? "" : description;
+    }
+
+    @FXML
+    private void goBack(){
+        Main.changeView("main",null);
     }
 
 }
