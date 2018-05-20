@@ -20,6 +20,7 @@
         </plugins>
     </build>
 
+
     <dependencies>
         <dependency>
             <groupId>com.oracle</groupId>
@@ -38,7 +39,12 @@
             <artifactId>hapi-fhir-structures-dstu2</artifactId>
             <version>2.0</version>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/com.jfoenix/jfoenix -->
+        <dependency>
+            <groupId>com.jfoenix</groupId>
+            <artifactId>jfoenix</artifactId>
+            <version>8.0.4</version>
+        </dependency>
     </dependencies>
 
 
