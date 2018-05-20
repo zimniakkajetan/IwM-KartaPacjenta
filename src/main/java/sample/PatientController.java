@@ -9,6 +9,7 @@ import ca.uhn.fhir.model.dstu2.resource.*;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDatePicker;
 import com.sun.org.apache.bcel.internal.classfile.Code;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -17,14 +18,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
 
 public class PatientController {
     IGenericClient client;
     private Patient patient;
+    private ArrayList<Observation> allObservations = new ArrayList<Observation>();
     private ArrayList<Observation> observations = new ArrayList<Observation>();
     private ArrayList<Medication> medications = new ArrayList<Medication>();
     private ArrayList<MedicationStatement> medicationStatements = new ArrayList<MedicationStatement>();
@@ -41,10 +42,13 @@ public class PatientController {
     HBox topHBox;
     @FXML
     JFXButton backButton;
-
-
     @FXML
     Text textPatientName;
+    @FXML
+    JFXDatePicker datePickerBegin;
+    @FXML
+    JFXDatePicker datePickerEnd;
+
 
     public PatientController(IGenericClient client) {
         this.client = client;
@@ -53,7 +57,7 @@ public class PatientController {
     public void initData(Object... params) {
         backButton.setPickOnBounds(true);
         textAreaPatientInfo.requestFocus();
-        
+
         textAreaPatientInfo.clear();
         textAreaPatientMedications.clear();
         textAreaPatientObservations.clear();
@@ -88,7 +92,7 @@ public class PatientController {
                 for (final Bundle.Entry element : results.getEntry()) {
                     IResource resource = element.getResource();
                     if (resource instanceof Observation) {
-                        observations.add((Observation) resource);
+                        allObservations.add((Observation) resource);
                     } else if (resource instanceof Medication) {
                         medications.add((Medication) resource);
                     } else if (resource instanceof MedicationStatement) {
@@ -97,6 +101,7 @@ public class PatientController {
                 }
 
                 sortArrays();
+                observations = new ArrayList<>(allObservations);
                 displayData();
 
             }
@@ -104,7 +109,7 @@ public class PatientController {
     }
 
     private void sortArrays() {
-        Collections.sort(observations, new Comparator<Observation>() {
+        Collections.sort(allObservations, new Comparator<Observation>() {
             @Override
             public int compare(Observation o1, Observation o2) {
                 return o1.getMeta().getLastUpdated().compareTo(o2.getMeta().getLastUpdated());
@@ -116,22 +121,25 @@ public class PatientController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                textAreaPatientObservations.clear();
+
+
                 textAreaPatientInfo.appendText("Observations: " + observations.size() + "\n");
                 textAreaPatientInfo.appendText("Medications: " + medications.size() + "\n");
                 textAreaPatientInfo.appendText("MedicationStatements: " + medicationStatements.size() + "\n");
                 for (Observation observation : observations) {
                     textAreaPatientObservations.appendText(observation.getMeta().getLastUpdated() + " " + getObservationDescription(observation) + "\n");
                 }
-                for(Medication medication : medications){
-                    textAreaPatientMedications.appendText(medication.getText()+"\n");
+                for (Medication medication : medications) {
+                    textAreaPatientMedications.appendText(medication.getText() + "\n");
                 }
-                for(MedicationStatement mStatement : medicationStatements){
-                    CodeableConceptDt medication =null;
-                    if(mStatement.getMedication() instanceof CodeableConceptDt){
-                        medication= ((CodeableConceptDt)mStatement.getMedication());
+                for (MedicationStatement mStatement : medicationStatements) {
+                    CodeableConceptDt medication = null;
+                    if (mStatement.getMedication() instanceof CodeableConceptDt) {
+                        medication = ((CodeableConceptDt) mStatement.getMedication());
                     }
 
-                    textAreaPatientMedicationStatements.appendText((medication!=null? medication.getText() : "") + " -> " +mStatement.getDosage().get(0).getText()+"\n");
+                    textAreaPatientMedicationStatements.appendText((medication != null ? medication.getText() : "") + " -> " + mStatement.getDosage().get(0).getText() + "\n");
                 }
             }
         });
@@ -146,8 +154,28 @@ public class PatientController {
     }
 
     @FXML
-    private void goBack(){
-        Main.changeView("main",null);
+    private void goBack() {
+        Main.changeView("main", null);
     }
 
-}
+    @FXML
+    private void filterByDate() {
+        LocalDate dateBegin = datePickerBegin.getValue();
+        LocalDate dateEnd = datePickerEnd.getValue();
+        observations.clear();
+        for (Observation observation : allObservations) {
+            if (dateBegin == null) {
+                dateBegin = new Date(Long.MIN_VALUE).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            }
+            if (dateEnd == null) {
+                dateEnd = new Date(Long.MAX_VALUE).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            }
+            if (observation.getMeta().getLastUpdated().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isAfter(dateBegin)
+                    && observation.getMeta().getLastUpdated().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isBefore(dateEnd)) {
+                observations.add(observation);
+            }
+        }
+        displayData();
+    }
+
+    }

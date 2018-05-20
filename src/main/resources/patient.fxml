@@ -11,6 +11,7 @@
 
 <?import com.jfoenix.controls.JFXTabPane?>
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDatePicker?>
 <GridPane prefHeight="500" prefWidth="800" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <HBox fx:id="topHBox" GridPane.rowIndex="0" spacing="16">
         <padding><Insets top="10" right="10"  bottom="10" left="10"/></padding>
@@ -34,7 +35,13 @@
                      </content></Tab>
                 <Tab text="Observations">
                      <content>
-                        <TextArea fx:id="textAreaPatientObservations" prefHeight="487.0" prefWidth="553.0" />
+                         <VBox>
+                             <HBox alignment="BOTTOM_RIGHT" spacing="8">
+                             <JFXDatePicker fx:id="datePickerBegin" promptText="Begin date" onAction="#filterByDate"/>
+                                 <JFXDatePicker fx:id="datePickerEnd" promptText="End date" onAction="#filterByDate"/>
+                             </HBox>
+                             <TextArea fx:id="textAreaPatientObservations" prefHeight="487.0" prefWidth="553.0" />
+                         </VBox>
                      </content>
                   </Tab>
                   <Tab text="Medications">
