@@ -216,7 +216,6 @@ public class PatientController {
         hbox.setSpacing(16);
         hbox.getStyleClass().add("HBoxObservation");
         VBox vbox = new VBox();
-
         vbox.setAlignment(Pos.CENTER_LEFT);
         Format formatter = new SimpleDateFormat("dd.MM.yyyy");
         vbox.getChildren().add(new Text(formatter.format(observation.getMeta().getLastUpdated())));
@@ -257,7 +256,8 @@ public class PatientController {
                 System.out.println(event.getSource());
             }
         });
-        return hbox;
+        JFXRippler rippler = new JFXRippler(hbox);
+        return rippler;
     }
 
     private void openObservationDialog(int id){
