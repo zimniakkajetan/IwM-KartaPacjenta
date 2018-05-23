@@ -39,10 +39,14 @@
 }
 
 .infoDescription{
-    -fx-font-size: 12pt;
+    -fx-font-size: 11pt;
     -fx-font-weight: bold;
 }
 
 .infoValue{
-    -fx-font-size: 12pt;
+    -fx-font-size: 11pt;
+}
+
+.HBoxObservation:hover{
+    -fx-background-color: #E3F2FD;
 }
