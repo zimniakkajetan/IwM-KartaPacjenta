@@ -45,13 +45,15 @@
                      </content></Tab>
                 <Tab text="Observations">
                      <content>
-                         <VBox>
+                         <VBox style="-fx-background-color: white;">
                              <HBox alignment="BOTTOM_RIGHT" spacing="8">
-                             <JFXDatePicker fx:id="datePickerBegin" promptText="Begin date" onAction="#filterByDate"/>
+                                 <padding><Insets top="10" right="10"  bottom="10" left="10"/></padding>
+                                 <JFXDatePicker fx:id="datePickerBegin" promptText="Begin date" onAction="#filterByDate"/>
                                  <JFXDatePicker fx:id="datePickerEnd" promptText="End date" onAction="#filterByDate"/>
                              </HBox>
-                             <ScrollPane fitToWidth="true">
-                             <VBox fx:id="VBoxObservations" >
+                             <Separator/>
+                             <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;-fx-border-color: transparent;">
+                             <VBox fx:id="VBoxObservations" style="-fx-background-color: white;">
                              </VBox>
                              </ScrollPane>
                          </VBox>

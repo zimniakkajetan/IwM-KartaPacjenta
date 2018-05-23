@@ -50,3 +50,7 @@
 .HBoxObservation:hover{
     -fx-background-color: #E3F2FD;
 }
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
