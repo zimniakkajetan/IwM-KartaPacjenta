@@ -31,7 +31,17 @@
               <tabs>
                 <Tab text="Info">
                      <content>
-                        <TextArea fx:id="textAreaPatientInfo" prefHeight="200.0" prefWidth="200.0" />
+                         <GridPane hgap="26" styleClass="infoGridPane">
+                             <padding><Insets top="10" right="10"  bottom="10" left="16"/></padding>
+                             <Text GridPane.rowIndex="0" GridPane.columnIndex="0" text="First name" styleClass="infoDescription"/>
+                             <Text GridPane.rowIndex="1" GridPane.columnIndex="0" text="Last name" styleClass="infoDescription"/>
+                             <Text GridPane.rowIndex="2" GridPane.columnIndex="0" text="Gender" styleClass="infoDescription"/>
+                             <Text GridPane.rowIndex="3" GridPane.columnIndex="0" text="Birthdate" styleClass="infoDescription"/>
+                             <Text fx:id="textFirstName" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <Text fx:id="textLastName" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <Text fx:id="textGender" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <Text fx:id="textBirthdate" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="infoValue"/>
+                         </GridPane>
                      </content></Tab>
                 <Tab text="Observations">
                      <content>

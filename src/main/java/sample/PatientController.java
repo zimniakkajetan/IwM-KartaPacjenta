@@ -19,6 +19,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -31,8 +33,6 @@ public class PatientController {
     private ArrayList<Medication> medications = new ArrayList<Medication>();
     private ArrayList<MedicationStatement> medicationStatements = new ArrayList<MedicationStatement>();
 
-    @FXML
-    TextArea textAreaPatientInfo;
     @FXML
     TextArea textAreaPatientObservations;
     @FXML
@@ -49,6 +49,8 @@ public class PatientController {
     JFXDatePicker datePickerBegin;
     @FXML
     JFXDatePicker datePickerEnd;
+    @FXML
+    Text textFirstName,textLastName,textGender,textBirthdate;
 
 
     public PatientController(IGenericClient client) {
@@ -68,6 +70,15 @@ public class PatientController {
             @Override
             public void run() {
                 textPatientName.setText(patient.getName().get(0).getGivenAsSingleString() + " " + patient.getName().get(0).getFamilyAsSingleString());
+                textFirstName.setText(patient.getName().get(0).getGivenAsSingleString());
+                textLastName.setText(patient.getName().get(0).getFamilyAsSingleString());
+                textGender.setText(patient.getGender());
+                if(patient.getBirthDate()!=null) {
+                    Format formatter = new SimpleDateFormat("dd.MM.yyyy");
+                    textBirthdate.setText(formatter.format(patient.getBirthDate()));
+                }else{
+                    textBirthdate.setText("Unknown");
+                }
             }
         });
         getPatientData();
@@ -120,9 +131,9 @@ public class PatientController {
                 textAreaPatientObservations.clear();
 
 
-                textAreaPatientInfo.appendText("Observations: " + observations.size() + "\n");
-                textAreaPatientInfo.appendText("Medications: " + medications.size() + "\n");
-                textAreaPatientInfo.appendText("MedicationStatements: " + medicationStatements.size() + "\n");
+                System.out.println("Observations: " + observations.size());
+                System.out.println("Medications: " + medications.size());
+                System.out.println("MedicationStatements: " + medicationStatements.size() + "\n");
                 for (Observation observation : observations) {
                     textAreaPatientObservations.appendText(observation.getMeta().getLastUpdated() + " " + getObservationDescription(observation) + "\n");
                 }
@@ -175,14 +186,15 @@ public class PatientController {
     }
 
     private void resetValues(){
-        tabPane.getSelectionModel().select(0);
-        textAreaPatientInfo.requestFocus();
-        datePickerBegin.setValue(null);
-        datePickerEnd.setValue(null);
-        textAreaPatientInfo.clear();
-        textAreaPatientMedications.clear();
-        textAreaPatientObservations.clear();
-        textAreaPatientMedicationStatements.clear();
+        Platform.runLater(()->{
+            tabPane.getSelectionModel().select(0);
+            tabPane.requestFocus();
+            datePickerBegin.setValue(null);
+            datePickerEnd.setValue(null);
+            textAreaPatientMedications.clear();
+            textAreaPatientObservations.clear();
+            textAreaPatientMedicationStatements.clear();
+        });
     }
 
     }

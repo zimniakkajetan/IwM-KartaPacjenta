@@ -33,3 +33,16 @@
 .jfx-tab-pane .tab-selected-line {
     -fx-background-color: white;
 }
+
+.infoGridPane{
+    -fx-background-color: white;
+}
+
+.infoDescription{
+    -fx-font-size: 12pt;
+    -fx-font-weight: bold;
+}
+
+.infoValue{
+    -fx-font-size: 12pt;
+}
