@@ -8,9 +8,7 @@ import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.resource.*;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDatePicker;
-import com.jfoenix.controls.JFXTabPane;
+import com.jfoenix.controls.*;
 import com.jfoenix.svg.SVGGlyph;
 import com.sun.org.apache.bcel.internal.classfile.Code;
 import javafx.application.Platform;
@@ -21,6 +19,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -62,6 +61,8 @@ public class PatientController {
     Text textFirstName, textLastName, textGender, textBirthdate;
     @FXML
     VBox VBoxObservations;
+    @FXML
+    StackPane stackPaneDialogContainter;
 
 
     public PatientController(IGenericClient client) {
@@ -252,10 +253,31 @@ public class PatientController {
         hbox.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                openObservationDialog(id);
                 System.out.println(event.getSource());
             }
         });
         return hbox;
+    }
+
+    private void openObservationDialog(int id){
+        Observation observation = observations.get(id);
+        JFXDialogLayout content = new JFXDialogLayout();
+        content.setHeading(new Text("Observation details"));
+        content.setBody(new Text(getObservationDescription(observation)+"\n"+observation.getMeta().getLastUpdated()
+        +"\n" + observation.getComments()));
+        JFXDialog dialog = new JFXDialog(stackPaneDialogContainter,content,JFXDialog.DialogTransition.CENTER);
+        JFXButton button = new JFXButton("Close");
+        button.setOnAction(actionEvent ->{
+            dialog.close();
+        });
+        dialog.setOnDialogClosed(event->{
+            stackPaneDialogContainter.setMouseTransparent(true);
+        });
+        content.setActions(button);
+        stackPaneDialogContainter.setMouseTransparent(false);
+        dialog.show();
+
     }
 
 }

@@ -69,4 +69,5 @@
                      </content></Tab>
               </tabs>
             </JFXTabPane>
+    <StackPane fx:id="stackPaneDialogContainter" GridPane.rowSpan="2" mouseTransparent="true"/>
 </GridPane>
