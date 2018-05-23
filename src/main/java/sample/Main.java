@@ -35,13 +35,13 @@ public class Main extends Application {
 
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("main.fxml"));
-        FXMLLoader loader2 = new FXMLLoader(getClass().getClassLoader().getResource("patient.fxml"));
+        FXMLLoader patientLoader = new FXMLLoader(getClass().getClassLoader().getResource("patient.fxml"));
 
         loader.setController(controller=new Controller(client));
-        loader2.setController(patientController=new PatientController(client));
+        patientLoader.setController(patientController=new PatientController(client));
 
         screenMap.put("main", loader.load());
-        screenMap.put("patient", loader2.load());
+        screenMap.put("patient", patientLoader.load());
         screenMap.get("main").getStylesheets().add("styles.css");
         screenMap.get("patient").getStylesheets().add("styles.css");
 
@@ -57,13 +57,13 @@ public class Main extends Application {
     public static void changeView (String name, Object... params){
         Pane pane = screenMap.get(name);
         if(pane!=null) {
+            if(name=="patient"){
+                patientController.initData(params);
+            }else if(name=="main"){
+                controller.clearSelection();
+            }
             primaryStage.getScene().setRoot(pane);
             currentView = name;
-        }
-        if(name=="patient"){
-            patientController.initData(params);
-        }else if(name=="main"){
-            controller.clearSelection();
         }
     }
 

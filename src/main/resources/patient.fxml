@@ -27,7 +27,7 @@
         </children>
 
     </HBox>
-            <JFXTabPane GridPane.rowIndex="1"  GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
+            <JFXTabPane fx:id="tabPane" GridPane.rowIndex="1"  GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
               <tabs>
                 <Tab text="Info">
                      <content>

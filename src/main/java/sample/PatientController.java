@@ -10,6 +10,7 @@ import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXTabPane;
 import com.sun.org.apache.bcel.internal.classfile.Code;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -39,7 +40,7 @@ public class PatientController {
     @FXML
     TextArea textAreaPatientMedications;
     @FXML
-    HBox topHBox;
+    JFXTabPane tabPane;
     @FXML
     JFXButton backButton;
     @FXML
@@ -55,13 +56,8 @@ public class PatientController {
     }
 
     public void initData(Object... params) {
+        resetValues();
         backButton.setPickOnBounds(true);
-        textAreaPatientInfo.requestFocus();
-
-        textAreaPatientInfo.clear();
-        textAreaPatientMedications.clear();
-        textAreaPatientObservations.clear();
-        textAreaPatientMedicationStatements.clear();
 
         Region icon = new Region();
         icon.getStyleClass().add("icon");
@@ -176,6 +172,17 @@ public class PatientController {
             }
         }
         displayData();
+    }
+
+    private void resetValues(){
+        tabPane.getSelectionModel().select(0);
+        textAreaPatientInfo.requestFocus();
+        datePickerBegin.setValue(null);
+        datePickerEnd.setValue(null);
+        textAreaPatientInfo.clear();
+        textAreaPatientMedications.clear();
+        textAreaPatientObservations.clear();
+        textAreaPatientMedicationStatements.clear();
     }
 
     }
