@@ -185,9 +185,9 @@ public class PatientController {
     @FXML
     private void filterByDate() {
         LocalDate dateBegin = datePickerBegin.getValue();
-        dateBegin = dateBegin.plusDays(-1);
+        dateBegin = dateBegin!=null ? dateBegin.plusDays(-1) : dateBegin;
         LocalDate dateEnd = datePickerEnd.getValue();
-        dateEnd = dateEnd.plusDays(1);
+        dateEnd = dateEnd!=null ? dateEnd.plusDays(1) : dateEnd;
         if (dateBegin == null) {
             dateBegin = new Date(Long.MIN_VALUE).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         }
