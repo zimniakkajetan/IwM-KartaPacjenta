@@ -98,6 +98,7 @@ public class PatientController {
 
     public void showCharts(){
         Main.showCharts(patient,allObservations,datePickerBegin.getValue(),datePickerEnd.getValue());
+        tabPane.requestFocus();
     }
 
     private void getPatientData() {

@@ -16,6 +16,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,10 +27,10 @@ public class Main extends Application {
     static AnchorPane root;
     private static String currentView;
     private static HashMap<String, Pane> screenMap = new HashMap<>();
-    private static ChartsController chartsController;
-    private static PatientController patientController;
     private static Controller controller;
+    private static PatientController patientController;
     private static Stage primaryStage;
+    private static URL chartsURL;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -41,18 +42,15 @@ public class Main extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("main.fxml"));
         FXMLLoader patientLoader = new FXMLLoader(getClass().getClassLoader().getResource("patient.fxml"));
-        FXMLLoader chartsLoader = new FXMLLoader(getClass().getClassLoader().getResource("charts.fxml"));
+        chartsURL = getClass().getClassLoader().getResource("charts.fxml");
 
         loader.setController(controller=new Controller(client));
         patientLoader.setController(patientController=new PatientController(client));
-        chartsLoader.setController(chartsController=new ChartsController());
 
         screenMap.put("main", loader.load());
         screenMap.put("patient", patientLoader.load());
-        screenMap.put("charts",chartsLoader.load());
         screenMap.get("main").getStylesheets().add("styles.css");
         screenMap.get("patient").getStylesheets().add("styles.css");
-        screenMap.get("charts").getStylesheets().add("styles.css");
 
 
         primaryStage.setTitle("Karta Pacjenta");
@@ -77,14 +75,19 @@ public class Main extends Application {
     }
 
     public static void showCharts(Patient patient, List<Observation> observations, LocalDate dateBegin, LocalDate dateEnd){
-        Stage stage = new Stage();
-        stage.setTitle("Karta Pacjenta");
-        Scene scene=new Scene(screenMap.get("charts"));
-        chartsController=new ChartsController(patient,observations,dateBegin,dateEnd);
-        stage.setScene(scene);
-        stage.show();
-
-
+        try {
+            Stage stage = new Stage();
+            stage.setTitle("Karta Pacjenta");
+            FXMLLoader chartsLoader = new FXMLLoader(chartsURL);
+            chartsLoader.setController(new ChartsController(patient, observations, dateBegin, dateEnd));
+            Pane pane = chartsLoader.load();
+            pane.getStylesheets().add("styles.css");
+            Scene scene = new Scene(pane);
+            stage.setScene(scene);
+            stage.show();
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
     }
 
     public static void main(String[] args) {
