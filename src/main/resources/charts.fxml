@@ -6,9 +6,35 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="$CONTROLLER_NAME$"
-            prefHeight="400.0" prefWidth="600.0">
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.Font?>
+<GridPane xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          prefHeight="500.0" prefWidth="700.0">
+    <HBox fx:id="topHBox" GridPane.rowIndex="0" spacing="16">
+    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+    <children>
+        <Text text="Charts"/>
+    </children>
 
-</AnchorPane>
+</HBox>
+
+    <JFXTabPane fx:id="tabPane" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
+                tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+            <Tab text="Height">
+            </Tab>
+            <Tab text="Weight">
+            </Tab>
+            <Tab text="Heart rate">
+            </Tab>
+            <Tab text="Respiratory rate">
+            </Tab>
+            <Tab text="Body temperature">
+            </Tab>
+        </tabs>
+    </JFXTabPane>
+
+</GridPane>

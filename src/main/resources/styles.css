@@ -9,9 +9,11 @@
     -fx-background-color: #1976D2;
 }
 
-#textPatientName{
+#topHBox Text{
     -fx-fill: white;
+    -fx-font-size: 25;
 }
+
 #backButton{
     -icon-paint: white;
     -fx-content-display: graphic-only;

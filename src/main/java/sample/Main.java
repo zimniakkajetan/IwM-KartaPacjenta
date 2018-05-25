@@ -1,10 +1,13 @@
 package sample;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.dstu2.resource.Observation;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.control.SplitPane;
@@ -13,6 +16,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +26,7 @@ public class Main extends Application {
     static AnchorPane root;
     private static String currentView;
     private static HashMap<String, Pane> screenMap = new HashMap<>();
+    private static ChartsController chartsController;
     private static PatientController patientController;
     private static Controller controller;
     private static Stage primaryStage;
@@ -36,14 +41,18 @@ public class Main extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("main.fxml"));
         FXMLLoader patientLoader = new FXMLLoader(getClass().getClassLoader().getResource("patient.fxml"));
+        FXMLLoader chartsLoader = new FXMLLoader(getClass().getClassLoader().getResource("charts.fxml"));
 
         loader.setController(controller=new Controller(client));
         patientLoader.setController(patientController=new PatientController(client));
+        chartsLoader.setController(chartsController=new ChartsController());
 
         screenMap.put("main", loader.load());
         screenMap.put("patient", patientLoader.load());
+        screenMap.put("charts",chartsLoader.load());
         screenMap.get("main").getStylesheets().add("styles.css");
         screenMap.get("patient").getStylesheets().add("styles.css");
+        screenMap.get("charts").getStylesheets().add("styles.css");
 
 
         primaryStage.setTitle("Karta Pacjenta");
@@ -65,6 +74,17 @@ public class Main extends Application {
             primaryStage.getScene().setRoot(pane);
             currentView = name;
         }
+    }
+
+    public static void showCharts(Patient patient, List<Observation> observations, LocalDate dateBegin, LocalDate dateEnd){
+        Stage stage = new Stage();
+        stage.setTitle("My New Stage Title");
+        Scene scene=new Scene(screenMap.get("charts"));
+        chartsController=new ChartsController(patient,observations,dateBegin,dateEnd);
+        stage.setScene(scene);
+        stage.show();
+
+
     }
 
     public static void main(String[] args) {

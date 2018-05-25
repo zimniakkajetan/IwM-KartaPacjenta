@@ -19,11 +19,7 @@
             <VBox alignment="CENTER">
         <JFXButton fx:id="backButton" onAction="#goBack"></JFXButton>
             </VBox>
-        <Text   fx:id="textPatientName"  strokeType="OUTSIDE"  text="Firstname Lastname">
-               <font>
-                  <Font size="25.0" />
-               </font>
-        </Text>
+        <Text   fx:id="textPatientName"  strokeType="OUTSIDE"  text="Firstname Lastname"/>
         </children>
 
     </HBox>
@@ -48,6 +44,7 @@
                          <VBox style="-fx-background-color: white;">
                              <HBox alignment="BOTTOM_RIGHT" spacing="8">
                                  <padding><Insets top="10" right="10"  bottom="10" left="10"/></padding>
+                                 <JFXButton text="Charts" onAction="#showCharts"/>
                                  <JFXDatePicker fx:id="datePickerBegin" promptText="Begin date" onAction="#filterByDate"/>
                                  <JFXDatePicker fx:id="datePickerEnd" promptText="End date" onAction="#filterByDate"/>
                              </HBox>

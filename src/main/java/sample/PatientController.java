@@ -96,6 +96,10 @@ public class PatientController {
         getPatientData();
     }
 
+    public void showCharts(){
+        Main.showCharts(patient,allObservations,datePickerBegin.getValue(),datePickerEnd.getValue());
+    }
+
     private void getPatientData() {
         final String id = patient.getId().getIdPart();
         new Thread(new Runnable() {
@@ -181,14 +185,14 @@ public class PatientController {
     private void filterByDate() {
         LocalDate dateBegin = datePickerBegin.getValue();
         LocalDate dateEnd = datePickerEnd.getValue();
+        if (dateBegin == null) {
+            dateBegin = new Date(Long.MIN_VALUE).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
+        if (dateEnd == null) {
+            dateEnd = new Date(Long.MAX_VALUE).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
         observations.clear();
         for (Observation observation : allObservations) {
-            if (dateBegin == null) {
-                dateBegin = new Date(Long.MIN_VALUE).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            }
-            if (dateEnd == null) {
-                dateEnd = new Date(Long.MAX_VALUE).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            }
             if (observation.getMeta().getLastUpdated().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isAfter(dateBegin)
                     && observation.getMeta().getLastUpdated().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isBefore(dateEnd)) {
                 observations.add(observation);
