@@ -78,7 +78,7 @@ public class Main extends Application {
 
     public static void showCharts(Patient patient, List<Observation> observations, LocalDate dateBegin, LocalDate dateEnd){
         Stage stage = new Stage();
-        stage.setTitle("My New Stage Title");
+        stage.setTitle("Karta Pacjenta");
         Scene scene=new Scene(screenMap.get("charts"));
         chartsController=new ChartsController(patient,observations,dateBegin,dateEnd);
         stage.setScene(scene);
