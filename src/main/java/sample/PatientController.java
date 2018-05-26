@@ -19,8 +19,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -52,6 +54,10 @@ public class PatientController {
     @FXML
     JFXButton backButton;
     @FXML
+    Button editinfobtn;
+    @FXML
+    Button canceleditbtn;
+    @FXML
     Text textPatientName;
     @FXML
     JFXDatePicker datePickerBegin;
@@ -59,6 +65,9 @@ public class PatientController {
     JFXDatePicker datePickerEnd;
     @FXML
     Text textFirstName, textLastName, textGender, textBirthdate;
+    @FXML
+    TextField textFirstNameE, textLastNameE, textGenderE, textBirthdateE;
+
     @FXML
     VBox VBoxObservations;
     @FXML
@@ -318,10 +327,29 @@ public class PatientController {
         button.setOnAction(actionEvent ->{
             dialog.close();
         });
+        final TextField editField = new TextField();
+        editField.setVisible(false);
+        JFXButton button2 = new JFXButton("Edit");
+        button2.setOnAction(actionEvent ->{
+            if(!editField.isVisible()) {
+                editField.setVisible(true);
+                editField.setText(getObservationDescription(observation) + "\n" + observation.getMeta().getLastUpdated()
+                        + "\n" + observation.getComments());
+                content.setBody(editField);
+                button2.setText("Save");
+            }
+            else{
+                //TODO post to database
+                System.out.println("Zmieniono dane\n");
+                //button2.setText("Edit");
+                //editField.setVisible(false);
+                dialog.close();
+            }
+        });
         dialog.setOnDialogClosed(event->{
             stackPaneDialogContainter.setMouseTransparent(true);
         });
-        content.setActions(button);
+        content.setActions(button,button2);
         stackPaneDialogContainter.setMouseTransparent(false);
         dialog.show();
 
@@ -335,11 +363,74 @@ public class PatientController {
         button.setOnAction(actionEvent ->{
             dialog.close();
         });
+        final TextField editField = new TextField();
+        editField.setVisible(false);
+        JFXButton button2 = new JFXButton("Edit");
+        button2.setOnAction(actionEvent ->{
+            if(!editField.isVisible()) {
+                editField.setVisible(true);
+                editField.setText(message);
+                content.setBody(editField);
+                button2.setText("Save");
+            }
+            else{
+                //TODO post to database
+                System.out.println("Zmieniono dane\n");
+                //button2.setText("Edit");
+                //editField.setVisible(false);
+                dialog.close();
+            }
+        });
         dialog.setOnDialogClosed(event->{
             stackPaneDialogContainter.setMouseTransparent(true);
         });
-        content.setActions(button);
+        content.setActions(button, button2);
         stackPaneDialogContainter.setMouseTransparent(false);
         dialog.show();
+    }
+    @FXML
+    private void editInfo(){
+        if(editinfobtn.getText().equals("Edit")) {
+            editinfobtn.setText("Save");
+            canceleditbtn.setVisible(true);
+            textFirstName.setVisible(false);
+            textLastName.setVisible(false);
+            textGender.setVisible(false);
+            textBirthdate.setVisible(false);
+
+            textFirstNameE.setText(textFirstName.getText());
+            textLastNameE.setText(textLastName.getText());
+            textGenderE.setText(textGender.getText());
+            textBirthdateE.setText(textBirthdate.getText());
+
+            textFirstNameE.setVisible(true);
+            textLastNameE.setVisible(true);
+            textGenderE.setVisible(true);
+            textBirthdateE.setVisible(true);
+        }
+        else{
+            //TODO post to database
+            System.out.println("Zmieniono dane\n");
+            canceledit();
+        }
+    }
+    @FXML
+    private void canceledit(){
+        canceleditbtn.setVisible(false);
+        editinfobtn.setText("Edit");
+        textFirstName.setVisible(true);
+        textLastName.setVisible(true);
+        textGender.setVisible(true);
+        textBirthdate.setVisible(true);
+
+        textFirstName.setText(textFirstNameE.getText());
+        textLastName.setText(textLastNameE.getText());
+        textGender.setText(textGenderE.getText());
+        textBirthdate.setText(textBirthdateE.getText());
+
+        textFirstNameE.setVisible(false);
+        textLastNameE.setVisible(false);
+        textGenderE.setVisible(false);
+        textBirthdateE.setVisible(false);
     }
 }

@@ -36,6 +36,13 @@
                              <Text fx:id="textLastName" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="infoValue"/>
                              <Text fx:id="textGender" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="infoValue"/>
                              <Text fx:id="textBirthdate" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <TextField fx:id="textFirstNameE" visible="false" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <TextField fx:id="textLastNameE" visible="false" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <TextField fx:id="textGenderE" visible="false" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <TextField fx:id="textBirthdateE" visible="false" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <JFXButton fx:id="editinfobtn" text="Edit" GridPane.rowIndex="0" GridPane.columnIndex="2" onAction="#editInfo"/>
+                             <JFXButton fx:id="canceleditbtn" visible="false " text="Cancel" GridPane.rowIndex="0" GridPane.columnIndex="3" onAction="#canceledit"/>
+
                          </GridPane>
                      </content></Tab>
                 <Tab text="Observations">
