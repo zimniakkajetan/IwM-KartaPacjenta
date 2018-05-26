@@ -61,6 +61,11 @@
             <artifactId>jfoenix</artifactId>
             <version>8.0.4</version>
         </dependency>
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart-fx</artifactId>
+            <version>1.0.1</version>
+        </dependency>
     </dependencies>
 
 

@@ -29,6 +29,11 @@
             <Tab text="Weight">
             </Tab>
             <Tab text="Heart rate">
+                <content>
+                    <Text fx:id="textFirstNamee"  GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="infoValue"/>
+                    <HBox fx:id="chartbox1" style="-fx-background-color: white;" >
+                    </HBox>
+                </content>
             </Tab>
             <Tab text="Respiratory rate">
             </Tab>
