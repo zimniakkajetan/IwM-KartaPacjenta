@@ -10,6 +10,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.Font?>
+<?import com.jfoenix.controls.JFXDatePicker?>
 <GridPane xmlns="http://javafx.com/javafx"
           xmlns:fx="http://javafx.com/fxml"
           prefHeight="500.0" prefWidth="700.0">
@@ -30,6 +31,18 @@
             </Tab>
             <Tab text="Heart rate">
                 <content>
+                    <VBox style="-fx-background-color: white;">
+                        <HBox alignment="BOTTOM_RIGHT" spacing="8">
+                            <padding><Insets top="10" right="10"  bottom="10" left="10"/></padding>
+                            <JFXDatePicker fx:id="datePickerBegin" promptText="Begin date" onAction="#filterByDate"/>
+                            <JFXDatePicker fx:id="datePickerEnd" promptText="End date" onAction="#filterByDate"/>
+                        </HBox>
+                        <Separator/>
+                        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;-fx-border-color: transparent;">
+                            <VBox fx:id="VBoxObservations" style="-fx-background-color: white;">
+                            </VBox>
+                        </ScrollPane>
+                    </VBox>
                     <Text fx:id="textFirstNamee"  GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="infoValue"/>
                     <HBox fx:id="chartbox1" style="-fx-background-color: white;" >
                     </HBox>

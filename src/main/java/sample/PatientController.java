@@ -62,6 +62,8 @@ public class PatientController {
     @FXML
     VBox VBoxObservations;
     @FXML
+    VBox VBoxMedStatements;
+    @FXML
     StackPane stackPaneDialogContainter;
 
 
@@ -147,7 +149,6 @@ public class PatientController {
             public void run() {
                 VBoxObservations.getChildren().clear();
 
-
                 System.out.println("Observations: " + observations.size());
                 System.out.println("Medications: " + medications.size());
                 System.out.println("MedicationStatements: " + medicationStatements.size() + "\n");
@@ -157,13 +158,17 @@ public class PatientController {
                 for (Medication medication : medications) {
                     textAreaPatientMedications.appendText(medication.getText() + "\n");
                 }
+                int id = 0;
                 for (MedicationStatement mStatement : medicationStatements) {
                     CodeableConceptDt medication = null;
                     if (mStatement.getMedication() instanceof CodeableConceptDt) {
                         medication = ((CodeableConceptDt) mStatement.getMedication());
                     }
-
-                    textAreaPatientMedicationStatements.appendText((medication != null ? medication.getText() : "") + " -> " + mStatement.getDosage().get(0).getText() + "\n");
+                    if(medication != null) {
+                        VBoxMedStatements.getChildren().add(createMedicationStatementItem(medication.getText(),mStatement.getDosage().get(0).getText()));
+                        id ++;
+                    }
+                    //textAreaPatientMedicationStatements.appendText((medication != null ? medication.getText() : "") + " -> " + mStatement.getDosage().get(0).getText() + "\n");
                 }
             }
         });
@@ -179,6 +184,7 @@ public class PatientController {
 
     @FXML
     private void goBack() {
+        VBoxObservations.getChildren().clear();
         Main.changeView("main", null);
     }
 
@@ -215,8 +221,9 @@ public class PatientController {
             datePickerBegin.setValue(null);
             datePickerEnd.setValue(null);
             VBoxObservations.getChildren().clear();
+            VBoxMedStatements.getChildren().clear();
             textAreaPatientMedications.clear();
-            textAreaPatientMedicationStatements.clear();
+            //textAreaPatientMedicationStatements.clear();
         });
     }
 
@@ -270,6 +277,35 @@ public class PatientController {
         JFXRippler rippler = new JFXRippler(hbox);
         return rippler;
     }
+    private Node createMedicationStatementItem(String medName, String description) {
+        HBox hbox = new HBox();
+        //hbox.setId("observationBox"+id);
+        hbox.setPadding(new Insets(10, 16, 10, 16));
+        hbox.setSpacing(16);
+        hbox.getStyleClass().add("HBoxObservation");
+        VBox vbox = new VBox();
+        vbox.setAlignment(Pos.CENTER_LEFT);
+        Format formatter = new SimpleDateFormat("dd.MM.yyyy");
+        vbox.getChildren().add(new Text(medName));
+
+        StackPane pane = new StackPane();
+        pane.setPrefWidth(50);
+        pane.setPrefHeight(50);
+        pane.setStyle("-fx-background-color: #1976D2; -fx-border-radius: 25 25 25 25; -fx-background-radius: 25 25 25 25;");
+        pane.setAlignment(Pos.CENTER);
+        hbox.getChildren().add(pane);
+        hbox.getChildren().add(vbox);
+
+        hbox.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                openMedStatementsDialog(medName, description);
+                System.out.println(event.getSource());
+            }
+        });
+        JFXRippler rippler = new JFXRippler(hbox);
+        return rippler;
+    }
 
     private void openObservationDialog(int id){
         Observation observation = observations.get(id);
@@ -290,5 +326,20 @@ public class PatientController {
         dialog.show();
 
     }
-
+    private void openMedStatementsDialog(String title, String message){
+        JFXDialogLayout content = new JFXDialogLayout();
+        content.setHeading(new Text(title));
+        content.setBody(new Text(message));
+        JFXDialog dialog = new JFXDialog(stackPaneDialogContainter,content,JFXDialog.DialogTransition.CENTER);
+        JFXButton button = new JFXButton("Close");
+        button.setOnAction(actionEvent ->{
+            dialog.close();
+        });
+        dialog.setOnDialogClosed(event->{
+            stackPaneDialogContainter.setMouseTransparent(true);
+        });
+        content.setActions(button);
+        stackPaneDialogContainter.setMouseTransparent(false);
+        dialog.show();
+    }
 }
