@@ -6,6 +6,7 @@ import ca.uhn.fhir.model.api.Include;
 import ca.uhn.fhir.model.base.resource.ResourceMetadataMap;
 import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.resource.*;
+import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
 import com.jfoenix.controls.*;
@@ -19,8 +20,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -52,6 +55,10 @@ public class PatientController {
     @FXML
     JFXButton backButton;
     @FXML
+    Button editinfobtn;
+    @FXML
+    Button canceleditbtn;
+    @FXML
     Text textPatientName;
     @FXML
     JFXDatePicker datePickerBegin;
@@ -60,7 +67,12 @@ public class PatientController {
     @FXML
     Text textFirstName, textLastName, textGender, textBirthdate;
     @FXML
+    TextField textFirstNameE, textLastNameE, textGenderE, textBirthdateE;
+
+    @FXML
     VBox VBoxObservations;
+    @FXML
+    VBox VBoxMedStatements;
     @FXML
     StackPane stackPaneDialogContainter;
 
@@ -147,7 +159,6 @@ public class PatientController {
             public void run() {
                 VBoxObservations.getChildren().clear();
 
-
                 System.out.println("Observations: " + observations.size());
                 System.out.println("Medications: " + medications.size());
                 System.out.println("MedicationStatements: " + medicationStatements.size() + "\n");
@@ -157,13 +168,17 @@ public class PatientController {
                 for (Medication medication : medications) {
                     textAreaPatientMedications.appendText(medication.getText() + "\n");
                 }
+                int id = 0;
                 for (MedicationStatement mStatement : medicationStatements) {
                     CodeableConceptDt medication = null;
                     if (mStatement.getMedication() instanceof CodeableConceptDt) {
                         medication = ((CodeableConceptDt) mStatement.getMedication());
                     }
-
-                    textAreaPatientMedicationStatements.appendText((medication != null ? medication.getText() : "") + " -> " + mStatement.getDosage().get(0).getText() + "\n");
+                    if(medication != null) {
+                        VBoxMedStatements.getChildren().add(createMedicationStatementItem(medication.getText(),mStatement.getDosage().get(0).getText()));
+                        id ++;
+                    }
+                    //textAreaPatientMedicationStatements.appendText((medication != null ? medication.getText() : "") + " -> " + mStatement.getDosage().get(0).getText() + "\n");
                 }
             }
         });
@@ -179,15 +194,20 @@ public class PatientController {
 
     @FXML
     private void goBack() {
+        VBoxObservations.getChildren().clear();
         Main.changeView("main", null);
     }
 
     @FXML
     private void filterByDate() {
         LocalDate dateBegin = datePickerBegin.getValue();
-        dateBegin = dateBegin!=null ? dateBegin.plusDays(-1) : dateBegin;
+        if(dateBegin != null) {
+            dateBegin = dateBegin.plusDays(-1);
+        }
         LocalDate dateEnd = datePickerEnd.getValue();
-        dateEnd = dateEnd!=null ? dateEnd.plusDays(1) : dateEnd;
+        if(dateEnd != null){
+            dateEnd = dateEnd.plusDays(1);
+        }
         if (dateBegin == null) {
             dateBegin = new Date(Long.MIN_VALUE).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         }
@@ -211,8 +231,9 @@ public class PatientController {
             datePickerBegin.setValue(null);
             datePickerEnd.setValue(null);
             VBoxObservations.getChildren().clear();
+            VBoxMedStatements.getChildren().clear();
             textAreaPatientMedications.clear();
-            textAreaPatientMedicationStatements.clear();
+            //textAreaPatientMedicationStatements.clear();
         });
     }
 
@@ -225,7 +246,7 @@ public class PatientController {
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.CENTER_LEFT);
         Format formatter = new SimpleDateFormat("dd.MM.yyyy");
-        vbox.getChildren().add(new Text(formatter.format(observation.getMeta().getLastUpdated())));
+        vbox.getChildren().add(new Text(formatter.format(((DateTimeDt)observation.getEffective()).getValue())));
         vbox.getChildren().add(new Text(getObservationDescription(observation)));
         String svgPath = "M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z";
         if (getObservationDescription(observation).contains("Heart")) {
@@ -266,6 +287,35 @@ public class PatientController {
         JFXRippler rippler = new JFXRippler(hbox);
         return rippler;
     }
+    private Node createMedicationStatementItem(String medName, String description) {
+        HBox hbox = new HBox();
+        //hbox.setId("observationBox"+id);
+        hbox.setPadding(new Insets(10, 16, 10, 16));
+        hbox.setSpacing(16);
+        hbox.getStyleClass().add("HBoxObservation");
+        VBox vbox = new VBox();
+        vbox.setAlignment(Pos.CENTER_LEFT);
+        Format formatter = new SimpleDateFormat("dd.MM.yyyy");
+        vbox.getChildren().add(new Text(medName));
+
+        StackPane pane = new StackPane();
+        pane.setPrefWidth(50);
+        pane.setPrefHeight(50);
+        pane.setStyle("-fx-background-color: #1976D2; -fx-border-radius: 25 25 25 25; -fx-background-radius: 25 25 25 25;");
+        pane.setAlignment(Pos.CENTER);
+        hbox.getChildren().add(pane);
+        hbox.getChildren().add(vbox);
+
+        hbox.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                openMedStatementsDialog(medName, description);
+                System.out.println(event.getSource());
+            }
+        });
+        JFXRippler rippler = new JFXRippler(hbox);
+        return rippler;
+    }
 
     private void openObservationDialog(int id){
         Observation observation = observations.get(id);
@@ -278,13 +328,110 @@ public class PatientController {
         button.setOnAction(actionEvent ->{
             dialog.close();
         });
+        final TextField editField = new TextField();
+        editField.setVisible(false);
+        JFXButton button2 = new JFXButton("Edit");
+        button2.setOnAction(actionEvent ->{
+            if(!editField.isVisible()) {
+                editField.setVisible(true);
+                editField.setText(getObservationDescription(observation) + "\n" + observation.getMeta().getLastUpdated()
+                        + "\n" + observation.getComments());
+                content.setBody(editField);
+                button2.setText("Save");
+            }
+            else{
+                //TODO post to database
+                System.out.println("Zmieniono dane\n");
+                //button2.setText("Edit");
+                //editField.setVisible(false);
+                dialog.close();
+            }
+        });
         dialog.setOnDialogClosed(event->{
             stackPaneDialogContainter.setMouseTransparent(true);
         });
-        content.setActions(button);
+        content.setActions(button,button2);
         stackPaneDialogContainter.setMouseTransparent(false);
         dialog.show();
 
     }
+    private void openMedStatementsDialog(String title, String message){
+        JFXDialogLayout content = new JFXDialogLayout();
+        content.setHeading(new Text(title));
+        content.setBody(new Text(message));
+        JFXDialog dialog = new JFXDialog(stackPaneDialogContainter,content,JFXDialog.DialogTransition.CENTER);
+        JFXButton button = new JFXButton("Close");
+        button.setOnAction(actionEvent ->{
+            dialog.close();
+        });
+        final TextField editField = new TextField();
+        editField.setVisible(false);
+        JFXButton button2 = new JFXButton("Edit");
+        button2.setOnAction(actionEvent ->{
+            if(!editField.isVisible()) {
+                editField.setVisible(true);
+                editField.setText(message);
+                content.setBody(editField);
+                button2.setText("Save");
+            }
+            else{
+                //TODO post to database
+                System.out.println("Zmieniono dane\n");
+                //button2.setText("Edit");
+                //editField.setVisible(false);
+                dialog.close();
+            }
+        });
+        dialog.setOnDialogClosed(event->{
+            stackPaneDialogContainter.setMouseTransparent(true);
+        });
+        content.setActions(button, button2);
+        stackPaneDialogContainter.setMouseTransparent(false);
+        dialog.show();
+    }
+    @FXML
+    private void editInfo(){
+        if(editinfobtn.getText().equals("Edit")) {
+            editinfobtn.setText("Save");
+            canceleditbtn.setVisible(true);
+            textFirstName.setVisible(false);
+            textLastName.setVisible(false);
+            textGender.setVisible(false);
+            textBirthdate.setVisible(false);
 
+            textFirstNameE.setText(textFirstName.getText());
+            textLastNameE.setText(textLastName.getText());
+            textGenderE.setText(textGender.getText());
+            textBirthdateE.setText(textBirthdate.getText());
+
+            textFirstNameE.setVisible(true);
+            textLastNameE.setVisible(true);
+            textGenderE.setVisible(true);
+            textBirthdateE.setVisible(true);
+        }
+        else{
+            //TODO post to database
+            System.out.println("Zmieniono dane\n");
+            canceledit();
+        }
+    }
+    @FXML
+    private void canceledit(){
+        canceleditbtn.setVisible(false);
+        editinfobtn.setText("Edit");
+        textFirstName.setVisible(true);
+        textLastName.setVisible(true);
+        textGender.setVisible(true);
+        textBirthdate.setVisible(true);
+
+        textFirstName.setText(textFirstNameE.getText());
+        textLastName.setText(textLastNameE.getText());
+        textGender.setText(textGenderE.getText());
+        textBirthdate.setText(textBirthdateE.getText());
+
+        textFirstNameE.setVisible(false);
+        textLastNameE.setVisible(false);
+        textGenderE.setVisible(false);
+        textBirthdateE.setVisible(false);
+    }
 }

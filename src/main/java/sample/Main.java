@@ -79,9 +79,11 @@ public class Main extends Application {
             Stage stage = new Stage();
             stage.setTitle("Karta Pacjenta");
             FXMLLoader chartsLoader = new FXMLLoader(chartsURL);
-            chartsLoader.setController(new ChartsController(patient, observations, dateBegin, dateEnd));
+            ChartsController controller=new ChartsController(patient, observations, dateBegin, dateEnd);
+            chartsLoader.setController(controller);
             Pane pane = chartsLoader.load();
             pane.getStylesheets().add("styles.css");
+            controller.drawCharts();
             Scene scene = new Scene(pane);
             stage.setScene(scene);
             stage.show();

@@ -10,6 +10,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.Font?>
+<?import com.jfoenix.controls.JFXDatePicker?>
 <GridPane xmlns="http://javafx.com/javafx"
           xmlns:fx="http://javafx.com/fxml"
           prefHeight="500.0" prefWidth="700.0">
@@ -28,11 +29,11 @@
             </Tab>
             <Tab text="Weight">
             </Tab>
-            <Tab text="Heart rate">
+            <Tab text="Heart Rate">
             </Tab>
-            <Tab text="Respiratory rate">
+            <Tab text="Respiratory Rate">
             </Tab>
-            <Tab text="Body temperature">
+            <Tab text="Body Temperature">
             </Tab>
         </tabs>
     </JFXTabPane>

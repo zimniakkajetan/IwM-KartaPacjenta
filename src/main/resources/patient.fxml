@@ -21,7 +21,6 @@
             </VBox>
         <Text   fx:id="textPatientName"  strokeType="OUTSIDE"  text="Firstname Lastname"/>
         </children>
-
     </HBox>
             <JFXTabPane fx:id="tabPane" GridPane.rowIndex="1"  GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
               <tabs>
@@ -37,6 +36,13 @@
                              <Text fx:id="textLastName" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="infoValue"/>
                              <Text fx:id="textGender" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="infoValue"/>
                              <Text fx:id="textBirthdate" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <TextField fx:id="textFirstNameE" visible="false" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <TextField fx:id="textLastNameE" visible="false" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <TextField fx:id="textGenderE" visible="false" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <TextField fx:id="textBirthdateE" visible="false" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <JFXButton fx:id="editinfobtn" text="Edit" GridPane.rowIndex="0" GridPane.columnIndex="2" onAction="#editInfo"/>
+                             <JFXButton fx:id="canceleditbtn" visible="false " text="Cancel" GridPane.rowIndex="0" GridPane.columnIndex="3" onAction="#canceledit"/>
+
                          </GridPane>
                      </content></Tab>
                 <Tab text="Observations">
@@ -62,7 +68,16 @@
                      </content></Tab>
                   <Tab text="Medication Statements">
                      <content>
-                        <TextArea fx:id="textAreaPatientMedicationStatements" prefHeight="200.0" prefWidth="200.0" />
+                         <VBox style="-fx-background-color: white;">
+                             <HBox alignment="BOTTOM_RIGHT" spacing="8">
+                                 <padding><Insets top="10" right="10"  bottom="10" left="10"/></padding>
+                             </HBox>
+                             <Separator/>
+                             <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;-fx-border-color: transparent;">
+                                 <VBox fx:id="VBoxMedStatements" style="-fx-background-color: white;">
+                                 </VBox>
+                             </ScrollPane>
+                         </VBox>
                      </content></Tab>
               </tabs>
             </JFXTabPane>
