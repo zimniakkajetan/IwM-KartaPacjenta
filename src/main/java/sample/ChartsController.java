@@ -8,10 +8,15 @@ import com.jfoenix.controls.JFXTabPane;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Tab;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -70,9 +75,12 @@ public class ChartsController {
 
                 NumberAxis numberAxis = new NumberAxis();
                 nl.itopia.corendon.components.DateAxis dateAxis = new nl.itopia.corendon.components.DateAxis();
-                ScatterChart<Date,Number> sc = new ScatterChart<Date,Number>(dateAxis,numberAxis);
-                sc.getData().setAll(series);
 
+                ScatterChart<Date,Number> sc = new ScatterChart<Date,Number>(dateAxis,numberAxis);
+                sc.setLegendVisible(false);
+                sc.getData().setAll(series);
+                sc.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+                sc.setPadding(new Insets(24,24,24,24));
                 tab.setContent(sc);
             }
         }

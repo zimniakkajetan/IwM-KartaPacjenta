@@ -68,16 +68,10 @@
                      </content></Tab>
                   <Tab text="Medication Statements">
                      <content>
-                         <VBox style="-fx-background-color: white;">
-                             <HBox alignment="BOTTOM_RIGHT" spacing="8">
-                                 <padding><Insets top="10" right="10"  bottom="10" left="10"/></padding>
-                             </HBox>
-                             <Separator/>
                              <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;-fx-border-color: transparent;">
                                  <VBox fx:id="VBoxMedStatements" style="-fx-background-color: white;">
                                  </VBox>
                              </ScrollPane>
-                         </VBox>
                      </content></Tab>
               </tabs>
             </JFXTabPane>

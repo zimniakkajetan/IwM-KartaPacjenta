@@ -25,7 +25,7 @@
     <JFXTabPane fx:id="tabPane" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
                 tabClosingPolicy="UNAVAILABLE">
         <tabs>
-            <Tab text="Height">
+            <Tab text="Height" >
             </Tab>
             <Tab text="Weight">
             </Tab>
