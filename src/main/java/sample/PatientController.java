@@ -203,24 +203,21 @@ public class PatientController {
 
     @FXML
     private void filterByDate() {
-        LocalDate dateBegin = datePickerBegin.getValue();
-        if(dateBegin != null) {
-            dateBegin = dateBegin.plusDays(-1);
+        LocalDate localDateBegin = datePickerBegin.getValue();
+        if(localDateBegin != null) {
+            localDateBegin = localDateBegin.plusDays(-1);
         }
-        LocalDate dateEnd = datePickerEnd.getValue();
-        if(dateEnd != null){
-            dateEnd = dateEnd.plusDays(1);
+        LocalDate localDateEnd = datePickerEnd.getValue();
+        if(localDateEnd != null){
+            localDateEnd = localDateEnd.plusDays(1);
         }
-        if (dateBegin == null) {
-            dateBegin = new Date(Long.MIN_VALUE).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        }
-        if (dateEnd == null) {
-            dateEnd = new Date(Long.MAX_VALUE).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        }
+
+        Date dateBegin = localDateBegin == null ? new Date(Long.MIN_VALUE) : Date.from(localDateBegin.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date dateEnd = localDateEnd == null ? new Date(Long.MAX_VALUE) : Date.from(localDateEnd.atStartOfDay(ZoneId.systemDefault()).toInstant());
         observations.clear();
         for (Observation observation : allObservations) {
-            if (observation.getMeta().getLastUpdated().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isAfter(dateBegin)
-                    && observation.getMeta().getLastUpdated().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isBefore(dateEnd)) {
+            if (((DateTimeDt)observation.getEffective()).getValue().after(dateBegin)
+                    && ((DateTimeDt)observation.getEffective()).getValue().before(dateEnd)) {
                 observations.add(observation);
             }
         }

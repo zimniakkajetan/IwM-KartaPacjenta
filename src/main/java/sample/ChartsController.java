@@ -30,8 +30,8 @@ public class ChartsController {
     private Map<String,ArrayList<Observation>> dataMap=new HashMap<>();
 
     private Patient patient;
-    LocalDate dateBegin;
-    LocalDate dateEnd;
+    LocalDate localDateBegin;
+    LocalDate localDateEnd;
     @FXML
     JFXTabPane tabPane;
 
@@ -39,11 +39,11 @@ public class ChartsController {
     public ChartsController(){
     }
 
-    public ChartsController(Patient patient, List<Observation> observations, LocalDate dateBegin, LocalDate dateEnd){
+    public ChartsController(Patient patient, List<Observation> observations, LocalDate localDateBegin, LocalDate localDateEnd){
         this.observations = observations;
         this.patient = patient;
-        this.dateBegin=dateBegin;
-        this.dateEnd=dateEnd;
+        this.localDateBegin=localDateBegin;
+        this.localDateEnd=localDateEnd;
     }
 
     public void drawCharts(){
@@ -66,7 +66,10 @@ public class ChartsController {
         for(Tab tab : tabPane.getTabs()){
             ArrayList<Observation> dataArray = dataMap.get(tab.getText());
             if(dataArray!=null){
-                ScatterChart<Date,Number> sc=createChart(dataArray,null,null);
+                Date dateBegin = localDateBegin==null? new Date(Long.MIN_VALUE) : Date.from(localDateBegin.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+                Date dateEnd = localDateEnd==null? new Date(Long.MAX_VALUE) : Date.from(localDateEnd.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+
+                ScatterChart<Date,Number> sc=createChart(dataArray,dateBegin,dateEnd);
                 VBox vbox = new VBox();
                 HBox hbox = new HBox();
                 JFXDatePicker datePickerBegin=new JFXDatePicker();
@@ -76,8 +79,8 @@ public class ChartsController {
                 datePickerEnd.setConverter(converter);
                 datePickerBegin.setPromptText("Begin date");
                 datePickerEnd.setPromptText("End date");
-                datePickerBegin.setValue(dateBegin);
-                datePickerEnd.setValue(dateEnd);
+                datePickerBegin.setValue(localDateBegin);
+                datePickerEnd.setValue(localDateEnd);
                 hbox.getChildren().addAll(datePickerBegin,datePickerEnd);
                 hbox.setPadding(new Insets(10));
                 hbox.setAlignment(Pos.BOTTOM_RIGHT);
@@ -130,6 +133,7 @@ public class ChartsController {
     }
 
     private void filterByDate(ActionEvent event){
+        System.out.println("filter");
         HBox hbox = (HBox)((Node)event.getSource()).getParent();
         VBox vbox = (VBox)hbox.getParent();
         ScatterChart<Date,Number> sc=(ScatterChart<Date,Number>)vbox.getChildren().get(1);
