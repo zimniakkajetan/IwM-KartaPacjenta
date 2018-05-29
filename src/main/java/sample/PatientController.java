@@ -82,6 +82,9 @@ public class PatientController {
     }
 
     public void initData(Object... params) {
+        DateConverter converter=new DateConverter();
+        datePickerEnd.setConverter(converter);
+        datePickerBegin.setConverter(converter);
         resetValues();
         backButton.setPickOnBounds(true);
 
