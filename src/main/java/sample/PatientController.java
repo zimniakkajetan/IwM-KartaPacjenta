@@ -151,7 +151,7 @@ public class PatientController {
         Collections.sort(allObservations, new Comparator<Observation>() {
             @Override
             public int compare(Observation o1, Observation o2) {
-                return o2.getMeta().getLastUpdated().compareTo(o1.getMeta().getLastUpdated());
+                return (((DateTimeDt)o2.getEffective()).getValue()).compareTo(((DateTimeDt)o1.getEffective()).getValue());
             }
         });
     }
