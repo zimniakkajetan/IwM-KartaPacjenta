@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDatePicker?>
+<GridPane prefHeight="500" prefWidth="800" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <HBox fx:id="topHBox" GridPane.rowIndex="0" spacing="16">
+        <padding><Insets top="10" right="10"  bottom="10" left="10"/></padding>
+        <children>
+            <VBox alignment="CENTER">
+        <JFXButton fx:id="backButton" onAction="#goBack"></JFXButton>
+            </VBox>
+        <Text   fx:id="textPatientName"  strokeType="OUTSIDE"  text="Firstname Lastname"/>
+        </children>
+    </HBox>
+            <JFXTabPane fx:id="tabPane" GridPane.rowIndex="1"  GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="Info">
+                     <content>
+                         <GridPane hgap="26" styleClass="infoGridPane">
+                             <padding><Insets top="10" right="10"  bottom="10" left="16"/></padding>
+                             <Text GridPane.rowIndex="0" GridPane.columnIndex="0" text="First name" styleClass="infoDescription"/>
+                             <Text GridPane.rowIndex="1" GridPane.columnIndex="0" text="Last name" styleClass="infoDescription"/>
+                             <Text GridPane.rowIndex="2" GridPane.columnIndex="0" text="Gender" styleClass="infoDescription"/>
+                             <Text GridPane.rowIndex="3" GridPane.columnIndex="0" text="Birthdate" styleClass="infoDescription"/>
+                             <Text fx:id="textFirstName" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <Text fx:id="textLastName" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <Text fx:id="textGender" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <Text fx:id="textBirthdate" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <TextField fx:id="textFirstNameE" visible="false" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <TextField fx:id="textLastNameE" visible="false" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <TextField fx:id="textGenderE" visible="false" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <TextField fx:id="textBirthdateE" visible="false" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="infoValue"/>
+                             <JFXButton fx:id="editinfobtn" text="Edit" GridPane.rowIndex="0" GridPane.columnIndex="2" onAction="#editInfo"/>
+                             <JFXButton fx:id="canceleditbtn" visible="false " text="Cancel" GridPane.rowIndex="0" GridPane.columnIndex="3" onAction="#canceledit"/>
+
+                         </GridPane>
+                     </content></Tab>
+                <Tab text="Observations">
+                     <content>
+                         <VBox style="-fx-background-color: white;">
+                             <HBox alignment="BOTTOM_RIGHT" spacing="8">
+                                 <padding><Insets top="10" right="10"  bottom="10" left="10"/></padding>
+                                 <JFXButton text="Charts" onAction="#showCharts"/>
+                                 <JFXDatePicker fx:id="datePickerBegin" promptText="Begin date" onAction="#filterByDate"/>
+                                 <JFXDatePicker fx:id="datePickerEnd" promptText="End date" onAction="#filterByDate"/>
+                             </HBox>
+                             <Separator/>
+                             <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;-fx-border-color: transparent;">
+                             <VBox fx:id="VBoxObservations" style="-fx-background-color: white;">
+                             </VBox>
+                             </ScrollPane>
+                         </VBox>
+                     </content>
+                  </Tab>
+                  <Tab text="Medications">
+                     <content>
+                        <TextArea fx:id="textAreaPatientMedications" prefHeight="200.0" prefWidth="200.0" />
+                     </content></Tab>
+                  <Tab text="Medication Statements">
+                     <content>
+                             <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;-fx-border-color: transparent;">
+                                 <VBox fx:id="VBoxMedStatements" style="-fx-background-color: white;">
+                                 </VBox>
+                             </ScrollPane>
+                     </content></Tab>
+              </tabs>
+            </JFXTabPane>
+    <StackPane fx:id="stackPaneDialogContainter" GridPane.rowSpan="2" mouseTransparent="true"/>
+</GridPane>

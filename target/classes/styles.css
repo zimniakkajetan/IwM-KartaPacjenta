@@ -1,0 +1,58 @@
+.jfx-button {
+    -fx-text-fill: blue;
+}
+.tree-table-view .tree-table-cell{
+    -fx-padding: 0 0 0 16;
+}
+
+#topHBox{
+    -fx-background-color: #1976D2;
+}
+
+#topHBox Text{
+    -fx-fill: white;
+    -fx-font-size: 25;
+}
+
+#backButton{
+    -icon-paint: white;
+    -fx-content-display: graphic-only;
+    -fx-background-radius: 2em;
+}
+#backButton .icon{
+    -fx-background-color: white;
+    -size: 18;
+    -fx-min-height: -size;
+    -fx-min-width: -size;
+    -fx-max-height: -size;
+    -fx-max-width: -size;
+    -fx-shape: "M21 11H6.83l3.58-3.59L9 6l-6 6 6 6 1.41-1.41L6.83 13H21z";
+}
+
+.jfx-tab-pane .tab-header-background {
+    -fx-background-color: #1976D2;
+}
+.jfx-tab-pane .tab-selected-line {
+    -fx-background-color: white;
+}
+
+.infoGridPane{
+    -fx-background-color: white;
+}
+
+.infoDescription{
+    -fx-font-size: 11pt;
+    -fx-font-weight: bold;
+}
+
+.infoValue{
+    -fx-font-size: 11pt;
+}
+
+.HBoxObservation:hover{
+    -fx-background-color: #E3F2FD;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}

@@ -33,7 +33,7 @@ import java.util.List;
 
 public class Controller {
     IGenericClient client;
-
+    Integer version_no = 0;
     public Controller(IGenericClient client) {
         this.client = client;
     }
@@ -131,17 +131,18 @@ public class Controller {
         patients.clear();
         for (Bundle.Entry element : results.getEntry()) {
             Patient patient = (Patient) element.getResource();
-            if (!patient.getName().get(0).getGiven().isEmpty()) {
+            version_no = patient.getName().size()-1;
+            if (!patient.getName().get(version_no).getGiven().isEmpty()) {
                 patients.add(new TablePatient(patient));
             }
-            System.out.println(patient.getName().get(0).getGiven());
+            System.out.println(patient.getName().get(patient.getName().size()-1).getGiven());
         }
 
         treeView.setOnMouseClicked(event -> {
             if (treeView.getSelectionModel().getSelectedItem() == null) return;
             Patient clickedPatient = treeView.getSelectionModel().getSelectedItem().getValue().patient;
             if (clickedPatient != null)
-                Main.changeView("patient", clickedPatient);
+                Main.changeView("patient", clickedPatient, version_no);
         });
     }
 
@@ -153,8 +154,8 @@ public class Controller {
 
         public TablePatient(Patient patient) {
             this.patient = patient;
-            name = new SimpleStringProperty(patient.getName().get(0).getGivenAsSingleString());
-            lastName = new SimpleStringProperty(patient.getName().get(0).getFamilyAsSingleString() + " id:" + patient.getId().getIdPart());
+            name = new SimpleStringProperty(patient.getName().get(version_no).getGivenAsSingleString());
+            lastName = new SimpleStringProperty(patient.getName().get(version_no).getFamilyAsSingleString() + " id:" + patient.getId().getIdPart());
             String ageString = "Unknown";
             if (patient.getBirthDate() != null) {
                 ageString = String.valueOf(Period.between(patient.getBirthDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).getYears());

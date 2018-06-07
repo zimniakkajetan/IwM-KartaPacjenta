@@ -5,8 +5,13 @@ import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.api.Include;
 import ca.uhn.fhir.model.base.resource.ResourceMetadataMap;
 import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
+import ca.uhn.fhir.model.dstu2.composite.NarrativeDt;
 import ca.uhn.fhir.model.dstu2.resource.*;
+import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
+import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.model.primitive.XhtmlDt;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
 import com.jfoenix.controls.*;
@@ -31,9 +36,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
-import java.text.Format;
-import java.text.Normalizer;
-import java.text.SimpleDateFormat;
+import java.text.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -45,6 +48,7 @@ public class PatientController {
     private ArrayList<Observation> observations = new ArrayList<Observation>();
     private ArrayList<Medication> medications = new ArrayList<Medication>();
     private ArrayList<MedicationStatement> medicationStatements = new ArrayList<MedicationStatement>();
+    Integer version_no = 0;
 
     @FXML
     TextArea textAreaPatientMedicationStatements;
@@ -93,13 +97,15 @@ public class PatientController {
         backButton.setGraphic(icon);
 
         patient = (Patient) params[0];
+        version_no = (Integer) params[1];
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                textPatientName.setText(patient.getName().get(0).getGivenAsSingleString() + " " + patient.getName().get(0).getFamilyAsSingleString());
-                textFirstName.setText(patient.getName().get(0).getGivenAsSingleString());
-                textLastName.setText(patient.getName().get(0).getFamilyAsSingleString());
+                textPatientName.setText(patient.getName().get(version_no).getGivenAsSingleString() + " " + patient.getName().get(version_no).getFamilyAsSingleString());
+                textFirstName.setText(patient.getName().get(version_no).getGivenAsSingleString());
+                textLastName.setText(patient.getName().get(version_no).getFamilyAsSingleString());
                 textGender.setText(patient.getGender());
+                System.out.println(patient.getBirthDate()+"\n");
                 if (patient.getBirthDate() != null) {
                     Format formatter = new SimpleDateFormat("dd.MM.yyyy");
                     textBirthdate.setText(formatter.format(patient.getBirthDate()));
@@ -178,7 +184,7 @@ public class PatientController {
                         medication = ((CodeableConceptDt) mStatement.getMedication());
                     }
                     if(medication != null) {
-                        VBoxMedStatements.getChildren().add(createMedicationStatementItem(medication.getText(),mStatement.getDosage().get(0).getText()));
+                        VBoxMedStatements.getChildren().add(createMedicationStatementItem(medication.getText(),mStatement.getDosage().get(0).getText(),mStatement,id));
                         id ++;
                     }
                     //textAreaPatientMedicationStatements.appendText((medication != null ? medication.getText() : "") + " -> " + mStatement.getDosage().get(0).getText() + "\n");
@@ -188,9 +194,13 @@ public class PatientController {
     }
 
     private String getObservationDescription(Observation observation) {
+        System.out.println(observation.getText().getDivAsString()+"\n");
         String description = observation.getText().getDivAsString();
         if (description != null && description.contains("'>") && description.contains("</div")) {
             description = description.substring(description.lastIndexOf("'>") + 2, description.lastIndexOf("</div"));
+        }
+        if (description != null && description.contains("\">") && description.contains("</div")) {
+            description = description.substring(description.lastIndexOf("\">") + 2, description.lastIndexOf("</div"));
         }
         return description == null ? "" : description;
     }
@@ -287,7 +297,7 @@ public class PatientController {
         JFXRippler rippler = new JFXRippler(hbox);
         return rippler;
     }
-    private Node createMedicationStatementItem(String medName, String description) {
+    private Node createMedicationStatementItem(String medName, String description, MedicationStatement mStatement, int id) {
         HBox hbox = new HBox();
         //hbox.setId("observationBox"+id);
         hbox.setPadding(new Insets(10, 16, 10, 16));
@@ -313,7 +323,7 @@ public class PatientController {
         hbox.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                openMedStatementsDialog(medName, description);
+                openMedStatementsDialog(medName, description, mStatement,id);
                 System.out.println(event.getSource());
             }
         });
@@ -325,8 +335,11 @@ public class PatientController {
         Observation observation = observations.get(id);
         JFXDialogLayout content = new JFXDialogLayout();
         content.setHeading(new Text("Observation details"));
-        content.setBody(new Text(getObservationDescription(observation)+"\n"+observation.getMeta().getLastUpdated()
-        +"\n" + observation.getComments()));
+        String observationString = getObservationDescription(observation)+"\n"+observation.getMeta().getLastUpdated();
+        if(observation.getComments() != null) {
+            observationString += ("\n" + observation.getComments());
+        }
+        content.setBody(new Text(observationString));
         JFXDialog dialog = new JFXDialog(stackPaneDialogContainter,content,JFXDialog.DialogTransition.CENTER);
         JFXButton button = new JFXButton("Close");
         button.setOnAction(actionEvent ->{
@@ -338,13 +351,16 @@ public class PatientController {
         button2.setOnAction(actionEvent ->{
             if(!editField.isVisible()) {
                 editField.setVisible(true);
-                editField.setText(getObservationDescription(observation) + "\n" + observation.getMeta().getLastUpdated()
-                        + "\n" + observation.getComments());
+                editField.setText(getObservationDescription(observation));
                 content.setBody(editField);
                 button2.setText("Save");
             }
             else{
-                //TODO post to database
+                NarrativeDt observationText = new NarrativeDt();
+                //observationText.setDiv(new XhtmlDt(editField.getText()));
+                observationText.setDivAsString(editField.getText());
+                observation.setText(observationText);
+                updateObservation(observation);
                 System.out.println("Zmieniono dane\n");
                 //button2.setText("Edit");
                 //editField.setVisible(false);
@@ -359,7 +375,8 @@ public class PatientController {
         dialog.show();
 
     }
-    private void openMedStatementsDialog(String title, String message){
+    private void openMedStatementsDialog(String title, String message, MedicationStatement mStatement,int id){
+        System.out.println(mStatement.getDosage().get(0).getText()+"\n");
         JFXDialogLayout content = new JFXDialogLayout();
         content.setHeading(new Text(title));
         content.setBody(new Text(message));
@@ -379,7 +396,10 @@ public class PatientController {
                 button2.setText("Save");
             }
             else{
-                //TODO post to database
+                MedicationStatement.Dosage dosage = new MedicationStatement.Dosage();
+                dosage.setText(editField.getText());
+                mStatement.getDosage().set(id,dosage);
+                updateMedStatements(mStatement);
                 System.out.println("Zmieniono dane\n");
                 //button2.setText("Edit");
                 //editField.setVisible(false);
@@ -414,10 +434,46 @@ public class PatientController {
             textBirthdateE.setVisible(true);
         }
         else{
-            //TODO post to database
-            System.out.println("Zmieniono dane\n");
+            System.out.println(patient.getName()+"\n");
+            patient.addName().addFamily(textLastNameE.getText()).addGiven(textFirstNameE.getText());
+            patient.setGender(AdministrativeGenderEnum.forCode(textGenderE.getText()));
+            Date date = null;
+            //TODO birthday vaildation!
+            DateFormat dateFormat = new SimpleDateFormat(
+                    "dd.MM.yyyy", Locale.US);
+            try {
+                date = dateFormat.parse(textBirthdateE.getText());
+                patient.setBirthDateWithDayPrecision(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            updateDB(patient);
             canceledit();
         }
+    }
+    public void updateDB(Patient pat){
+        MethodOutcome outcome = client.update()
+                .resource(pat)
+                .execute();
+        IdDt id = (IdDt) outcome.getId();
+        System.out.println("Got ID: " + id.getValue());
+        System.out.println("Zmieniono dane\n");
+    }
+    public void updateMedStatements(MedicationStatement medStat){
+        MethodOutcome outcome = client.update()
+                .resource(medStat)
+                .execute();
+        IdDt id = (IdDt) outcome.getId();
+        System.out.println("Got ID: " + id.getValue());
+        System.out.println("Zmieniono dane\n");
+    }
+    public void updateObservation(Observation obs){
+        MethodOutcome outcome = client.update()
+                .resource(obs)
+                .execute();
+        IdDt id = (IdDt) outcome.getId();
+        System.out.println("Got ID: " + id.getValue());
+        System.out.println("Zmieniono dane\n");
     }
     @FXML
     private void canceledit(){
