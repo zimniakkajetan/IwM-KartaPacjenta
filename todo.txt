@@ -3,6 +3,3 @@
 - refresh textfields after edit (personal info)
 - refresh everything after edit anything
 - use lastUpdated data in charts
-
-NOT NECESSARY:
-- birthday validation (when editing)

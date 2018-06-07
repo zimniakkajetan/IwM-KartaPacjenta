@@ -77,7 +77,7 @@ public class Main extends Application {
     public static void showCharts(Patient patient, List<Observation> observations, LocalDate dateBegin, LocalDate dateEnd){
         try {
             Stage stage = new Stage();
-            stage.setTitle("Karta Pacjenta");
+            stage.setTitle("Patient info card");
             FXMLLoader chartsLoader = new FXMLLoader(chartsURL);
             ChartsController controller=new ChartsController(patient, observations, dateBegin, dateEnd);
             chartsLoader.setController(controller);

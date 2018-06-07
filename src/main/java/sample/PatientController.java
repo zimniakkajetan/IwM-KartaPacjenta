@@ -25,10 +25,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -50,8 +47,6 @@ public class PatientController {
     private ArrayList<MedicationStatement> medicationStatements = new ArrayList<MedicationStatement>();
     Integer version_no = 0;
 
-    @FXML
-    TextArea textAreaPatientMedicationStatements;
     @FXML
     TextArea textAreaPatientMedications;
     @FXML
@@ -144,7 +139,6 @@ public class PatientController {
                         medicationStatements.add((MedicationStatement) resource);
                     }
                 }
-
                 sortArrays();
                 observations = new ArrayList<>(allObservations);
                 displayData();
@@ -357,13 +351,10 @@ public class PatientController {
             }
             else{
                 NarrativeDt observationText = new NarrativeDt();
-                //observationText.setDiv(new XhtmlDt(editField.getText()));
                 observationText.setDivAsString(editField.getText());
                 observation.setText(observationText);
                 updateObservation(observation);
                 System.out.println("Zmieniono dane\n");
-                //button2.setText("Edit");
-                //editField.setVisible(false);
                 dialog.close();
             }
         });
@@ -386,7 +377,6 @@ public class PatientController {
             dialog.close();
         });
         final TextField editField = new TextField();
-        editField.setVisible(false);
         JFXButton button2 = new JFXButton("Edit");
         button2.setOnAction(actionEvent ->{
             if(!editField.isVisible()) {
@@ -401,8 +391,6 @@ public class PatientController {
                 mStatement.getDosage().set(id,dosage);
                 updateMedStatements(mStatement);
                 System.out.println("Zmieniono dane\n");
-                //button2.setText("Edit");
-                //editField.setVisible(false);
                 dialog.close();
             }
         });
@@ -415,6 +403,7 @@ public class PatientController {
     }
     @FXML
     private void editInfo(){
+
         if(editinfobtn.getText().equals("Edit")) {
             editinfobtn.setText("Save");
             canceleditbtn.setVisible(true);
@@ -434,20 +423,24 @@ public class PatientController {
             textBirthdateE.setVisible(true);
         }
         else{
-            System.out.println(patient.getName()+"\n");
             patient.addName().addFamily(textLastNameE.getText()).addGiven(textFirstNameE.getText());
             patient.setGender(AdministrativeGenderEnum.forCode(textGenderE.getText()));
             Date date = null;
-            //TODO birthday vaildation!
+            Boolean correctDate = true;
             DateFormat dateFormat = new SimpleDateFormat(
                     "dd.MM.yyyy", Locale.US);
             try {
                 date = dateFormat.parse(textBirthdateE.getText());
                 patient.setBirthDateWithDayPrecision(date);
             } catch (ParseException e) {
+                Alert alert = new Alert(Alert.AlertType.NONE, "Correct date format: dd.MM.yyyy", ButtonType.OK);
+                alert.showAndWait();
+                correctDate = false;
                 e.printStackTrace();
             }
-            updateDB(patient);
+            if(correctDate){
+                updateDB(patient);
+            }
             canceledit();
         }
     }
