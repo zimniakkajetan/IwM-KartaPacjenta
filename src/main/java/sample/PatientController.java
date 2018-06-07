@@ -367,7 +367,6 @@ public class PatientController {
 
     }
     private void openMedStatementsDialog(String title, String message, MedicationStatement mStatement,int id){
-        System.out.println(mStatement.getDosage().get(0).getText()+"\n");
         JFXDialogLayout content = new JFXDialogLayout();
         content.setHeading(new Text(title));
         content.setBody(new Text(message));
@@ -378,6 +377,7 @@ public class PatientController {
         });
         final TextField editField = new TextField();
         JFXButton button2 = new JFXButton("Edit");
+        editField.setVisible(false);
         button2.setOnAction(actionEvent ->{
             if(!editField.isVisible()) {
                 editField.setVisible(true);
