@@ -118,6 +118,11 @@ public class PatientController {
     }
 
     private void getPatientData() {
+        allObservations = new ArrayList<>();
+        observations = new ArrayList<>();
+        medications = new ArrayList<>();
+        medicationStatements = new ArrayList<>();
+        
         final String id = patient.getId().getIdPart();
         new Thread(new Runnable() {
             @Override
