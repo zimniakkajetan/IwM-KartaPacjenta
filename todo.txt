@@ -1,5 +1,4 @@
 
-- clear list of observations, medStatements after "goBack"
 - refresh textfields after edit (personal info)
 - refresh everything after edit anything
 - use lastUpdated data in charts
