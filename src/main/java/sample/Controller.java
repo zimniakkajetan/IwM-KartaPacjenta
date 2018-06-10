@@ -155,7 +155,7 @@ public class Controller {
         public TablePatient(Patient patient) {
             this.patient = patient;
             name = new SimpleStringProperty(patient.getName().get(version_no).getGivenAsSingleString());
-            lastName = new SimpleStringProperty(patient.getName().get(version_no).getFamilyAsSingleString() + " id:" + patient.getId().getIdPart());
+            lastName = new SimpleStringProperty(patient.getName().get(version_no).getFamilyAsSingleString());
             String ageString = "Unknown";
             if (patient.getBirthDate() != null) {
                 ageString = String.valueOf(Period.between(patient.getBirthDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).getYears());

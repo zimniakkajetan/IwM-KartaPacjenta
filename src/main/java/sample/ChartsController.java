@@ -5,7 +5,9 @@ import ca.uhn.fhir.model.dstu2.resource.Observation;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.controls.JFXTabPane;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -47,8 +49,14 @@ public class ChartsController {
     }
 
     public void drawCharts(){
-        retrieveData();
-        createCharts();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                retrieveData();
+                createCharts();
+            }
+        }).start();
+
     }
 
     private void retrieveData(){
@@ -87,8 +95,9 @@ public class ChartsController {
                 hbox.setSpacing(8);
                 hbox.setBackground(new Background(new BackgroundFill(Color.WHITE,CornerRadii.EMPTY,Insets.EMPTY)));
                 vbox.getChildren().addAll(hbox,sc);
-                tab.setContent(vbox);
-
+                Platform.runLater(()-> {
+                    tab.setContent(vbox);
+                });
                 datePickerBegin.setOnAction(event -> {
                     filterByDate(event);
                 });
@@ -128,7 +137,7 @@ public class ChartsController {
         sc.setLegendVisible(false);
         sc.getData().setAll(series);
         sc.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
-        sc.setPadding(new Insets(24,24,24,24));
+        sc.setPadding(new Insets(24,44,24,24));
         return sc;
     }
 

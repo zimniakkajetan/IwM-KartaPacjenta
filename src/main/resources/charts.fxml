@@ -26,6 +26,9 @@
                 tabClosingPolicy="UNAVAILABLE">
         <tabs>
             <Tab text="Height" >
+                <content>
+                    <Pane style="-fx-background-color: white"/>
+                </content>
             </Tab>
             <Tab text="Weight">
             </Tab>
