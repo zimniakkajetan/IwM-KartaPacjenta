@@ -96,7 +96,7 @@ public class ChartsController {
                 hbox.setBackground(new Background(new BackgroundFill(Color.WHITE,CornerRadii.EMPTY,Insets.EMPTY)));
                 vbox.getChildren().addAll(hbox,sc);
                 Platform.runLater(()-> {
-                    tab.setContent(vbox);
+                            tab.setContent(vbox);
                 });
                 datePickerBegin.setOnAction(event -> {
                     filterByDate(event);
