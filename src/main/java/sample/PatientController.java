@@ -151,6 +151,9 @@ public class PatientController {
         Collections.sort(allObservations, new Comparator<Observation>() {
             @Override
             public int compare(Observation o1, Observation o2) {
+                if(o1.getEffective()==null && o2.getEffective()==null)return 0;
+                if(o1.getEffective()==null)return 1;
+                if(o2.getEffective()==null)return -1;
                 return (((DateTimeDt)o2.getEffective()).getValue()).compareTo(((DateTimeDt)o1.getEffective()).getValue());
             }
         });
