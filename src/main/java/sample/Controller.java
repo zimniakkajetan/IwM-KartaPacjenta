@@ -104,7 +104,7 @@ public class Controller {
                 ICriterion criterion = new StringClientParam("name").matches().value(query);
                 if(comboBox.getSelectionModel().getSelectedIndex()==1){
                     criterion = Patient.FAMILY.matches().value(query);
-                }else if(comboBox.getSelectionModel().getSelectedIndex()==2){
+                }else if(comboBox.getSelectionModel().getSelectedIndex()==2) {
                     criterion = Patient.GIVEN.matches().value(query);
                 }
 

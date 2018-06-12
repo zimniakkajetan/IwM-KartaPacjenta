@@ -6,6 +6,7 @@ import ca.uhn.fhir.model.api.Include;
 import ca.uhn.fhir.model.base.resource.ResourceMetadataMap;
 import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.composite.NarrativeDt;
+import ca.uhn.fhir.model.dstu2.composite.QuantityDt;
 import ca.uhn.fhir.model.dstu2.composite.RatioDt;
 import ca.uhn.fhir.model.dstu2.resource.*;
 import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
@@ -214,6 +215,8 @@ public class PatientController {
             @Override
             public void run() {
                 VBoxObservations.getChildren().clear();
+                VBoxMedStatements.getChildren().clear();
+                VBoxMedications.getChildren().clear();
 
                 System.out.println("Observations: " + observations.size());
                 System.out.println("Medications: " + medications.size());
@@ -237,6 +240,17 @@ public class PatientController {
                 }
             }
         });
+    }
+
+    private String getDescription(Observation observation){
+        String description = observation.getCode().getText() == null ? "Unknown observation" : observation.getCode().getText();
+        //number value
+        QuantityDt quantity = (QuantityDt)observation.getValue();
+        if(quantity!=null) {
+            Number value = quantity.getValueElement().getValueAsNumber();
+            description += ", " + String.valueOf(value) + " " + quantity.getUnit();
+        }
+        return description;
     }
 
     private String getDescriptionFromDiv(String description) {
@@ -300,17 +314,17 @@ public class PatientController {
         vbox.setAlignment(Pos.CENTER_LEFT);
         Format formatter = new SimpleDateFormat("dd.MM.yyyy");
         vbox.getChildren().add(new Text(formatter.format(((DateTimeDt)observation.getEffective()).getValue())));
-        vbox.getChildren().add(new Text(getDescriptionFromDiv(observation.getText().getDivAsString())));
+        vbox.getChildren().add(new Text(getDescription(observation)));
         String svgPath = "M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z";
-        if (getDescriptionFromDiv(observation.getText().getDivAsString()).contains("Heart")) {
+        if (getDescription(observation).contains("Heart")) {
             svgPath = "M7.5,4A5.5,5.5 0 0,0 2,9.5C2,10 2.09,10.5 2.22,11H6.3L7.57,7.63C7.87,6.83 9.05,6.75 9.43,7.63L11.5,13L12.09,11.58C12.22,11.25 12.57,11 13,11H21.78C21.91,10.5 22,10 22,9.5A5.5,5.5 0 0,0 16.5,4C14.64,4 13,4.93 12,6.34C11,4.93 9.36,4 7.5,4V4M3,12.5A1,1 0 0,0 2,13.5A1,1 0 0,0 3,14.5H5.44L11,20C12,20.9 12,20.9 13,20L18.56,14.5H21A1,1 0 0,0 22,13.5A1,1 0 0,0 21,12.5H13.4L12.47,14.8C12.07,15.81 10.92,15.67 10.55,14.83L8.5,9.5L7.54,11.83C7.39,12.21 7.05,12.5 6.6,12.5H3Z";
-        } else if (getDescriptionFromDiv(observation.getText().getDivAsString()).contains("Height")) {
+        } else if (getDescription(observation).contains("Height")) {
             svgPath = "M1.39,18.36L3.16,16.6L4.58,18L5.64,16.95L4.22,15.54L5.64,14.12L8.11,16.6L9.17,15.54L6.7,13.06L8.11,11.65L9.53,13.06L10.59,12L9.17,10.59L10.59,9.17L13.06,11.65L14.12,10.59L11.65,8.11L13.06,6.7L14.47,8.11L15.54,7.05L14.12,5.64L15.54,4.22L18,6.7L19.07,5.64L16.6,3.16L18.36,1.39L22.61,5.64L5.64,22.61L1.39,18.36Z";
-        } else if (getDescriptionFromDiv(observation.getText().getDivAsString()).contains("Weight")) {
+        } else if (getDescription(observation).contains("Weight")) {
             svgPath = "M12,3A4,4 0 0,1 16,7C16,7.73 15.81,8.41 15.46,9H18C18.95,9 19.75,9.67 19.95,10.56C21.96,18.57 22,18.78 22,19A2,2 0 0,1 20,21H4A2,2 0 0,1 2,19C2,18.78 2.04,18.57 4.05,10.56C4.25,9.67 5.05,9 6,9H8.54C8.19,8.41 8,7.73 8,7A4,4 0 0,1 12,3M12,5A2,2 0 0,0 10,7A2,2 0 0,0 12,9A2,2 0 0,0 14,7A2,2 0 0,0 12,5Z";
-        } else if (getDescriptionFromDiv(observation.getText().getDivAsString()).contains("Temperature")) {
+        } else if (getDescription(observation).contains("Temperature")) {
             svgPath = "M17,17A5,5 0 0,1 12,22A5,5 0 0,1 7,17C7,15.36 7.79,13.91 9,13V5A3,3 0 0,1 12,2A3,3 0 0,1 15,5V13C16.21,13.91 17,15.36 17,17M11,8V14.17C9.83,14.58 9,15.69 9,17A3,3 0 0,0 12,20A3,3 0 0,0 15,17C15,15.69 14.17,14.58 13,14.17V8H11Z";
-        }else if(getDescriptionFromDiv(observation.getText().getDivAsString()).contains("Respiratory")){
+        }else if(getDescription(observation).contains("Respiratory")){
             svgPath="M31.852,20.446c0-5.712-6.538-15.006-10.555-15.006c-1.917,0-2.927,2.128-3.445,4.963c-0.312-0.355-0.495-0.629-0.66-0.818\n" +
                     "\t\tV2.302c0-0.706-0.534-1.278-1.239-1.278s-1.239,0.572-1.239,1.278v7.446c-0.165,0.332-0.373,0.636-0.628,0.926\n" +
                     "\t\tc-0.509-2.922-1.512-5.135-3.467-5.135c-4.018,0-10.56,9.294-10.56,15.004c0,5.713-0.763,10.342,3.254,10.342\n" +
@@ -435,7 +449,17 @@ public class PatientController {
         Observation observation = observations.get(id);
         JFXDialogLayout content = new JFXDialogLayout();
         content.setHeading(new Text("Observation details"));
-        String observationString = getDescriptionFromDiv(observation.getText().getDivAsString())+"\n"+observation.getMeta().getLastUpdated();
+        //type of observation
+        String observationString = observation.getCode().getText() == null ? "Unknown observation" : observation.getCode().getText();
+        //number value
+        Format formatter = new SimpleDateFormat("HH:mm dd.MM.yyyy");
+        observationString+="\n"+formatter.format(((DateTimeDt)observation.getEffective()).getValue());
+
+        QuantityDt quantity = (QuantityDt)observation.getValue();
+        if(quantity!=null) {
+            Number value = quantity.getValueElement().getValueAsNumber();
+            observationString += "\n" + String.valueOf(value) + " " + quantity.getUnit() + "\n";
+        }
         if(observation.getComments() != null) {
             observationString += ("\n" + observation.getComments());
         }
@@ -451,17 +475,43 @@ public class PatientController {
         button2.setOnAction(actionEvent ->{
             if(!editField.isVisible()) {
                 editField.setVisible(true);
-                editField.setText(getDescriptionFromDiv(observation.getText().getDivAsString()));
-                content.setBody(editField);
+                editField.setPrefWidth(50);
+                if(quantity!=null) {
+                    editField.setText(String.valueOf(quantity.getValueElement().getValueAsNumber()));
+                }
+                VBox vbox = new VBox();
+                vbox.getChildren().add(new Text(observation.getCode().getText() == null ? "Unknown observation" : observation.getCode().getText()));
+                HBox hbox = new HBox();
+                hbox.setAlignment(Pos.CENTER_LEFT);
+                Text text = new Text();
+                if(quantity!=null){
+                    text.setText(" "+quantity.getUnit());
+                }
+                hbox.getChildren().addAll(editField,text);
+                vbox.getChildren().add(hbox);
+                content.setBody(vbox);
                 button2.setText("Save");
             }
             else{
                 NarrativeDt observationText = new NarrativeDt();
                 observationText.setDivAsString(editField.getText());
-                observation.setText(observationText);
-                updateObservation(observation);
-                System.out.println("Zmieniono dane\n");
-                dialog.close();
+                if(editField.getText()==null || editField.getText().trim().equals("") || observation.getValue()==null)return;
+                ((QuantityDt) observation.getValue()).setValue(new Double(editField.getText()));
+                NarrativeDt ndt = new NarrativeDt();
+                ndt.setDivAsString(observation.getCode().getText()+", "+editField.getText()+" "+((QuantityDt) observation.getValue()).getUnit());
+                observation.setText(ndt);
+                VBox vbox = new VBox();
+                vbox.setAlignment(Pos.CENTER);
+                vbox.setSpacing(12);
+                JFXSpinner spinner = new JFXSpinner();
+                spinner.setPrefHeight(50);
+                vbox.getChildren().addAll(spinner,new Text("Updating"));
+                content.setBody(vbox);
+                new Thread(()->{updateObservation(observation);
+                    System.out.println("Zmieniono dane\n");
+                    getPatientData();
+                    dialog.close();
+                }).start();
             }
         });
         dialog.setOnDialogClosed(event->{
@@ -495,9 +545,19 @@ public class PatientController {
                 MedicationStatement.Dosage dosage = new MedicationStatement.Dosage();
                 dosage.setText(editField.getText());
                 mStatement.getDosage().set(id,dosage);
-                updateMedStatements(mStatement);
-                System.out.println("Zmieniono dane\n");
-                dialog.close();
+                VBox vbox = new VBox();
+                vbox.setAlignment(Pos.CENTER);
+                vbox.setSpacing(12);
+                JFXSpinner spinner = new JFXSpinner();
+                spinner.setPrefHeight(50);
+                vbox.getChildren().addAll(spinner,new Text("Updating"));
+                content.setBody(vbox);
+                new Thread(()->{
+                    updateMedStatements(mStatement);
+                    System.out.println("Zmieniono dane\n");
+                    getPatientData();
+                    dialog.close();
+                }).start();
             }
         });
         dialog.setOnDialogClosed(event->{

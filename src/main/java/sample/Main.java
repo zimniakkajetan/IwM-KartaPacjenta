@@ -37,6 +37,7 @@ public class Main extends Application {
         this.primaryStage=primaryStage;
         FhirContext ctx = FhirContext.forDstu2();
         String serverBase = "http://fhirtest.uhn.ca/baseDstu2";
+        //String serverBase = "http://localhost:8080/baseDstu2";
         IGenericClient client = ctx.newRestfulGenericClient(serverBase);
 
 
