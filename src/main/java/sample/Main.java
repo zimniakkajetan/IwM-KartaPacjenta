@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.control.SplitPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
@@ -35,9 +36,10 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         this.primaryStage=primaryStage;
+        this.primaryStage.getIcons().add(new Image("icon.png"));
         FhirContext ctx = FhirContext.forDstu2();
-        String serverBase = "http://fhirtest.uhn.ca/baseDstu2";
-        //String serverBase = "http://localhost:8080/baseDstu2";
+        //String serverBase = "http://fhirtest.uhn.ca/baseDstu2";
+        String serverBase = "http://localhost:8080/baseDstu2";
         IGenericClient client = ctx.newRestfulGenericClient(serverBase);
 
 
@@ -54,7 +56,7 @@ public class Main extends Application {
         screenMap.get("patient").getStylesheets().add("styles.css");
 
 
-        primaryStage.setTitle("Karta Pacjenta");
+        primaryStage.setTitle("Patient card");
         controller.init();
         primaryStage.setScene(new Scene(screenMap.get("main")));
 
@@ -78,7 +80,8 @@ public class Main extends Application {
     public static void showCharts(Patient patient, List<Observation> observations, LocalDate dateBegin, LocalDate dateEnd){
         try {
             Stage stage = new Stage();
-            stage.setTitle("Patient info card");
+            stage.getIcons().add(new Image("icon.png"));
+            stage.setTitle("Patient card");
             FXMLLoader chartsLoader = new FXMLLoader(chartsURL);
             ChartsController controller=new ChartsController(patient, observations, dateBegin, dateEnd);
             chartsLoader.setController(controller);

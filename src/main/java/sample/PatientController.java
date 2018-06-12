@@ -93,7 +93,7 @@ public class PatientController {
         backButton.setGraphic(icon);
 
         patient = (Patient) params[0];
-        version_no = (Integer) params[1];
+        //version_no = (Integer) params[1];
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
